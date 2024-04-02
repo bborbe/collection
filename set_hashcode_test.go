@@ -11,10 +11,10 @@ import (
 	"github.com/bborbe/collection"
 )
 
-var _ = Describe("Set", func() {
-	var set collection.Set[User]
+var _ = Describe("SetHashCode", func() {
+	var set collection.SetHashCode[User]
 	BeforeEach(func() {
-		set = collection.NewSet[User]()
+		set = collection.NewSetHashCode[User]()
 	})
 	It("returns no error", func() {
 		ptr := collection.Ptr("admin")

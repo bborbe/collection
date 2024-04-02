@@ -11,10 +11,10 @@ import (
 	"github.com/bborbe/collection"
 )
 
-var _ = Describe("Set", func() {
-	var set collection.Set[User]
+var _ = Describe("SetEqual", func() {
+	var set collection.SetEqual[User]
 	BeforeEach(func() {
-		set = collection.NewSet[User]()
+		set = collection.NewSetEqual[User]()
 	})
 	It("returns no error", func() {
 		ptr := collection.Ptr("admin")
