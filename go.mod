@@ -1,6 +1,6 @@
 module github.com/bborbe/collection
 
-go 1.21.1
+go 1.22.2
 
 require (
 	github.com/bborbe/errors v1.2.0

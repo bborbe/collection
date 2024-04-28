@@ -45,4 +45,32 @@ var _ = Describe("SetHashCode", func() {
 		})
 		Expect(set.Slice()).To(HaveLen(2))
 	})
+	Context("Length", func() {
+		var length int
+		JustBeforeEach(func() {
+			length = set.Length()
+		})
+		Context("empty", func() {
+			It("has correct lenght", func() {
+				Expect(length).To(Equal(0))
+			})
+		})
+		Context("with elements", func() {
+			BeforeEach(func() {
+				set.Add(User{
+					Firstname: "Ben",
+					Lastname:  "Bo",
+					Age:       23,
+				})
+				set.Add(User{
+					Firstname: "Ben",
+					Lastname:  "Bo",
+					Age:       24,
+				})
+			})
+			It("has correct lenght", func() {
+				Expect(length).To(Equal(2))
+			})
+		})
+	})
 })

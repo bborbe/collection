@@ -16,33 +16,63 @@ var _ = Describe("Set", func() {
 	BeforeEach(func() {
 		set = collection.NewSet[User]()
 	})
-	It("returns no error", func() {
-		ptr := collection.Ptr("admin")
-		set.Add(User{
-			Firstname: "Ben",
-			Lastname:  "Bo",
-			Age:       23,
-			Groups:    ptr,
+	Context("Splice", func() {
+		It("returns no error", func() {
+			ptr := collection.Ptr("admin")
+			set.Add(User{
+				Firstname: "Ben",
+				Lastname:  "Bo",
+				Age:       23,
+				Groups:    ptr,
+			})
+			set.Add(User{
+				Firstname: "Ben",
+				Lastname:  "Bo",
+				Age:       23,
+				Groups:    ptr,
+			})
+			Expect(set.Slice()).To(HaveLen(1))
 		})
-		set.Add(User{
-			Firstname: "Ben",
-			Lastname:  "Bo",
-			Age:       23,
-			Groups:    ptr,
+		It("returns no error", func() {
+			set.Add(User{
+				Firstname: "Ben",
+				Lastname:  "Bo",
+				Age:       23,
+			})
+			set.Add(User{
+				Firstname: "Ben",
+				Lastname:  "Bo",
+				Age:       24,
+			})
+			Expect(set.Slice()).To(HaveLen(2))
 		})
-		Expect(set.Slice()).To(HaveLen(1))
 	})
-	It("returns no error", func() {
-		set.Add(User{
-			Firstname: "Ben",
-			Lastname:  "Bo",
-			Age:       23,
+	Context("Length", func() {
+		var length int
+		JustBeforeEach(func() {
+			length = set.Length()
 		})
-		set.Add(User{
-			Firstname: "Ben",
-			Lastname:  "Bo",
-			Age:       24,
+		Context("empty", func() {
+			It("has correct lenght", func() {
+				Expect(length).To(Equal(0))
+			})
 		})
-		Expect(set.Slice()).To(HaveLen(2))
+		Context("with elements", func() {
+			BeforeEach(func() {
+				set.Add(User{
+					Firstname: "Ben",
+					Lastname:  "Bo",
+					Age:       23,
+				})
+				set.Add(User{
+					Firstname: "Ben",
+					Lastname:  "Bo",
+					Age:       24,
+				})
+			})
+			It("has correct lenght", func() {
+				Expect(length).To(Equal(2))
+			})
+		})
 	})
 })
