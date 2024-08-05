@@ -11,6 +11,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 ## v1.5.0
 
 - add Map helper
+- go mod update
 
 ## v1.4.1
 
