@@ -4,6 +4,7 @@
 
 package collection
 
+// Join allow to join two arrays into one new array
 func Join[T any](a []T, b []T) []T {
 	result := make([]T, 0, len(a)+len(b))
 	for _, aa := range a {

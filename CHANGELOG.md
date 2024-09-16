@@ -11,6 +11,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 ## v1.7.0
 
 - add join
+- go mod update
 
 ## v1.6.0
 
