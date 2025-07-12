@@ -75,4 +75,45 @@ var _ = Describe("SetEqual", func() {
 			})
 		})
 	})
+	Context("Remove", func() {
+		It("removes existing element", func() {
+			user := User{Firstname: "Alice", Age: 25}
+			set.Add(user)
+			Expect(set.Length()).To(Equal(1))
+
+			set.Remove(user)
+			Expect(set.Length()).To(Equal(0))
+			Expect(set.Contains(user)).To(BeFalse())
+		})
+
+		It("does nothing when removing non-existent element", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			set.Add(user1)
+			Expect(set.Length()).To(Equal(1))
+
+			set.Remove(user2) // Remove element that was never added
+			Expect(set.Length()).To(Equal(1))
+			Expect(set.Contains(user1)).To(BeTrue())
+		})
+	})
+	Context("Contains", func() {
+		It("returns false for empty set", func() {
+			user := User{Firstname: "Alice", Age: 25}
+			Expect(set.Contains(user)).To(BeFalse())
+		})
+
+		It("returns true for existing element", func() {
+			user := User{Firstname: "Alice", Age: 25}
+			set.Add(user)
+			Expect(set.Contains(user)).To(BeTrue())
+		})
+
+		It("returns false for non-existent element", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			set.Add(user1)
+			Expect(set.Contains(user2)).To(BeFalse())
+		})
+	})
 })
