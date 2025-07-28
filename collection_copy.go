@@ -4,6 +4,7 @@
 
 package collection
 
+// Copy returns a new slice that is a shallow copy of the input slice.
 func Copy[T any](values []T) []T {
 	result := make([]T, 0, len(values))
 	for _, v := range values {

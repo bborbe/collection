@@ -8,18 +8,27 @@ import (
 	"sync"
 )
 
+// HasEqual represents types that can compare themselves for equality with another value.
 type HasEqual[V any] interface {
 	Equal(value V) bool
 }
 
+// SetEqual represents a thread-safe set for types that implement HasEqual.
+// Elements are uniquely identified by their Equal method.
 type SetEqual[T HasEqual[T]] interface {
+	// Add inserts an element into the set, using its Equal method for uniqueness.
 	Add(element T)
+	// Remove deletes an element from the set using its Equal method for matching.
 	Remove(element T)
+	// Contains reports whether an element matching the given value is present in the set.
 	Contains(element T) bool
+	// Slice returns all elements as a slice in arbitrary order.
 	Slice() []T
+	// Length returns the number of elements in the set.
 	Length() int
 }
 
+// NewSetEqual creates a new thread-safe set for types that implement HasEqual.
 func NewSetEqual[T HasEqual[T]]() SetEqual[T] {
 	return &setEqual[T]{
 		data: make([]T, 0),

@@ -4,6 +4,7 @@
 
 package collection
 
+// Contains reports whether the given value is present in the slice.
 func Contains[T comparable](list []T, value T) bool {
 	for _, e := range list {
 		if e == value {

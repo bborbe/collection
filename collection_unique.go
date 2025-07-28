@@ -4,6 +4,8 @@
 
 package collection
 
+// Unique returns a new slice containing only the unique elements from the input slice.
+// The order of the first occurrence of each element is preserved.
 func Unique[T comparable](list []T) []T {
 	result := make([]T, 0)
 	m := map[T]bool{}

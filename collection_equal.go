@@ -4,6 +4,8 @@
 
 package collection
 
+// Equal reports whether two slices are equal by comparing their lengths
+// and elements in order.
 func Equal[T comparable](a []T, b []T) bool {
 	if len(a) != len(b) {
 		return false

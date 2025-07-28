@@ -4,6 +4,8 @@
 
 package collection
 
+// Exclude returns a new slice with all elements from the input slice
+// except those specified in the excludes parameter.
 func Exclude[T comparable](list []T, excludes ...T) []T {
 	e := make(map[T]bool)
 	for _, exclude := range excludes {

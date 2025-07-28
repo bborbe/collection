@@ -8,18 +8,27 @@ import (
 	"sync"
 )
 
+// HasHashCode represents types that can provide a string hash code for themselves.
 type HasHashCode interface {
 	HashCode() string
 }
 
+// SetHashCode represents a thread-safe set for types that implement HasHashCode.
+// Elements are uniquely identified by their hash code.
 type SetHashCode[T HasHashCode] interface {
+	// Add inserts an element into the set, using its hash code for uniqueness.
 	Add(element T)
+	// Remove deletes an element from the set by its hash code.
 	Remove(element T)
+	// Contains reports whether an element with the given hash code is present in the set.
 	Contains(element T) bool
+	// Slice returns all elements as a slice in arbitrary order.
 	Slice() []T
+	// Length returns the number of elements in the set.
 	Length() int
 }
 
+// NewSetHashCode creates a new thread-safe set for types that implement HasHashCode.
 func NewSetHashCode[T HasHashCode]() SetHashCode[T] {
 	return &setHashCode[T]{
 		data: make(map[string]T),

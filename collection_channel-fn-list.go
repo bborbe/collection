@@ -10,6 +10,8 @@ import (
 	"github.com/bborbe/errors"
 )
 
+// ChannelFnList executes a function that sends values to a channel and
+// collects all the values into a slice. Returns an empty slice if an error occurs.
 func ChannelFnList[T interface{}](
 	ctx context.Context,
 	fn func(ctx context.Context, ch chan<- T) error,

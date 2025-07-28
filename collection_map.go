@@ -4,6 +4,8 @@
 
 package collection
 
+// Map applies the given function to each element in the slice.
+// If any function call returns an error, Map stops and returns that error.
 func Map[T any](list []T, fn func(value T) error) error {
 	for _, element := range list {
 		if err := fn(element); err != nil {

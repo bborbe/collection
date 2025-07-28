@@ -10,6 +10,8 @@ import (
 	"github.com/bborbe/errors"
 )
 
+// ChannelFnCount executes a function that sends values to a channel and
+// returns the total count of values sent. Returns -1 if an error occurs.
 func ChannelFnCount[T interface{}](
 	ctx context.Context,
 	fn func(ctx context.Context, ch chan<- T) error,

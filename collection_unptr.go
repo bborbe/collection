@@ -4,6 +4,8 @@
 
 package collection
 
+// UnPtr dereferences a pointer and returns the value.
+// If the pointer is nil, it returns the zero value of type T.
 func UnPtr[T any](ptr *T) T {
 	var t T
 	if ptr != nil {

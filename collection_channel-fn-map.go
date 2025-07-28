@@ -12,6 +12,9 @@ import (
 	"github.com/bborbe/run"
 )
 
+// ChannelFnMap executes a function that sends values to a channel and
+// applies a mapping function to each value received from the channel.
+// It runs the getter and mapper functions concurrently and returns the first error encountered.
 func ChannelFnMap[T interface{}](
 	ctx context.Context,
 	getFn func(ctx context.Context, ch chan<- T) error,

@@ -8,14 +8,21 @@ import (
 	"sync"
 )
 
+// Set represents a thread-safe collection of unique elements.
 type Set[T comparable] interface {
+	// Add inserts an element into the set.
 	Add(element T)
+	// Remove deletes an element from the set.
 	Remove(element T)
+	// Contains reports whether an element is present in the set.
 	Contains(element T) bool
+	// Slice returns all elements as a slice in arbitrary order.
 	Slice() []T
+	// Length returns the number of elements in the set.
 	Length() int
 }
 
+// NewSet creates a new thread-safe set for comparable types.
 func NewSet[T comparable]() Set[T] {
 	return &set[T]{
 		data: make(map[T]struct{}),

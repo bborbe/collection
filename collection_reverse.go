@@ -4,6 +4,7 @@
 
 package collection
 
+// Reverse returns a new slice with the elements in reverse order.
 func Reverse[T any](values []T) []T {
 	length := len(values)
 	result := make([]T, length)
