@@ -21,4 +21,7 @@ var _ = DescribeTable("ContainsAll",
 	Entry("different length", []string{"a"}, []string{"b", "c"}, false),
 	Entry("different length", []string{"a"}, []string{"a", "a"}, true),
 	Entry("different length", []string{"a", "a"}, []string{"a"}, true),
+	Entry("b contains extra element", []string{"a", "b"}, []string{"a", "b", "c"}, false),
+	Entry("a contains all elements of b", []string{"a", "b", "c", "d"}, []string{"a", "b"}, true),
+	Entry("a subset of b", []string{"a", "b"}, []string{"a", "b", "c"}, false),
 )

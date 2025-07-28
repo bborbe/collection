@@ -4,20 +4,13 @@
 
 package collection
 
-// ContainsAll check if all elements of A is in B and all elements of B is in A
+// ContainsAll returns true if all elements from slice b are present in slice a.
+// It checks whether a is a superset of b (a ⊇ b).
+// Empty slice b always returns true. Duplicate elements in b are treated as single elements.
 func ContainsAll[T comparable](a []T, b []T) bool {
 	mapA := make(map[T]bool)
 	for _, aa := range a {
 		mapA[aa] = true
-	}
-	mapB := make(map[T]bool)
-	for _, bb := range b {
-		mapB[bb] = true
-	}
-	for _, aa := range a {
-		if mapB[aa] == false {
-			return false
-		}
 	}
 	for _, bb := range b {
 		if mapA[bb] == false {

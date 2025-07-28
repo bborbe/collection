@@ -8,6 +8,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.10.0
+
+**BREAKING CHANGES:**
+- ContainsAll behavior changed: now only checks if all elements of second argument are present in first argument (superset check), instead of bidirectional equality check
+
 ## v1.9.1
 
 - add tests
