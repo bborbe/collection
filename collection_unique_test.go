@@ -11,7 +11,8 @@ import (
 	"github.com/bborbe/collection"
 )
 
-var _ = DescribeTable("Unique",
+var _ = DescribeTable(
+	"Unique",
 	func(input []string, expected []string) {
 		result := collection.Unique(input)
 		Expect(result).To(Equal(expected))
@@ -21,7 +22,11 @@ var _ = DescribeTable("Unique",
 	Entry("no duplicates", []string{"a", "b", "c"}, []string{"a", "b", "c"}),
 	Entry("all duplicates", []string{"a", "a", "a"}, []string{"a"}),
 	Entry("mixed duplicates", []string{"a", "b", "a", "c", "b"}, []string{"a", "b", "c"}),
-	Entry("preserves first occurrence order", []string{"c", "a", "b", "a", "c"}, []string{"c", "a", "b"}),
+	Entry(
+		"preserves first occurrence order",
+		[]string{"c", "a", "b", "a", "c"},
+		[]string{"c", "a", "b"},
+	),
 )
 
 var _ = DescribeTable("Unique with integers",

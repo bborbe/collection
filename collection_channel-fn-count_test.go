@@ -17,9 +17,12 @@ import (
 var _ = Describe("ChannelFnCount", func() {
 	It("counts zero elements from empty channel", func() {
 		ctx := context.Background()
-		count, err := collection.ChannelFnCount(ctx, func(ctx context.Context, ch chan<- string) error {
-			return nil // Send nothing
-		})
+		count, err := collection.ChannelFnCount(
+			ctx,
+			func(ctx context.Context, ch chan<- string) error {
+				return nil // Send nothing
+			},
+		)
 
 		Expect(err).To(BeNil())
 		Expect(count).To(Equal(0))
@@ -27,10 +30,13 @@ var _ = Describe("ChannelFnCount", func() {
 
 	It("counts single element", func() {
 		ctx := context.Background()
-		count, err := collection.ChannelFnCount(ctx, func(ctx context.Context, ch chan<- string) error {
-			ch <- "test"
-			return nil
-		})
+		count, err := collection.ChannelFnCount(
+			ctx,
+			func(ctx context.Context, ch chan<- string) error {
+				ch <- "test"
+				return nil
+			},
+		)
 
 		Expect(err).To(BeNil())
 		Expect(count).To(Equal(1))
@@ -38,12 +44,15 @@ var _ = Describe("ChannelFnCount", func() {
 
 	It("counts multiple elements", func() {
 		ctx := context.Background()
-		count, err := collection.ChannelFnCount(ctx, func(ctx context.Context, ch chan<- string) error {
-			for i := 0; i < 5; i++ {
-				ch <- fmt.Sprintf("item-%d", i)
-			}
-			return nil
-		})
+		count, err := collection.ChannelFnCount(
+			ctx,
+			func(ctx context.Context, ch chan<- string) error {
+				for i := 0; i < 5; i++ {
+					ch <- fmt.Sprintf("item-%d", i)
+				}
+				return nil
+			},
+		)
 
 		Expect(err).To(BeNil())
 		Expect(count).To(Equal(5))
@@ -51,12 +60,15 @@ var _ = Describe("ChannelFnCount", func() {
 
 	It("counts integers", func() {
 		ctx := context.Background()
-		count, err := collection.ChannelFnCount(ctx, func(ctx context.Context, ch chan<- int) error {
-			for i := 1; i <= 10; i++ {
-				ch <- i
-			}
-			return nil
-		})
+		count, err := collection.ChannelFnCount(
+			ctx,
+			func(ctx context.Context, ch chan<- int) error {
+				for i := 1; i <= 10; i++ {
+					ch <- i
+				}
+				return nil
+			},
+		)
 
 		Expect(err).To(BeNil())
 		Expect(count).To(Equal(10))
@@ -64,10 +76,13 @@ var _ = Describe("ChannelFnCount", func() {
 
 	It("handles error from producer function", func() {
 		ctx := context.Background()
-		count, err := collection.ChannelFnCount(ctx, func(ctx context.Context, ch chan<- string) error {
-			ch <- "before error"
-			return fmt.Errorf("producer error")
-		})
+		count, err := collection.ChannelFnCount(
+			ctx,
+			func(ctx context.Context, ch chan<- string) error {
+				ch <- "before error"
+				return fmt.Errorf("producer error")
+			},
+		)
 
 		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("count channel failed"))
@@ -81,16 +96,19 @@ var _ = Describe("ChannelFnCount", func() {
 		done := make(chan struct{})
 		go func() {
 			defer close(done)
-			count, err := collection.ChannelFnCount(ctx, func(ctx context.Context, ch chan<- int) error {
-				for i := 0; i < 1000; i++ {
-					select {
-					case <-ctx.Done():
-						return ctx.Err()
-					case ch <- i:
+			count, err := collection.ChannelFnCount(
+				ctx,
+				func(ctx context.Context, ch chan<- int) error {
+					for i := 0; i < 1000; i++ {
+						select {
+						case <-ctx.Done():
+							return ctx.Err()
+						case ch <- i:
+						}
 					}
-				}
-				return nil
-			})
+					return nil
+				},
+			)
 
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring("context canceled"))
@@ -103,12 +121,15 @@ var _ = Describe("ChannelFnCount", func() {
 
 	It("counts custom types", func() {
 		ctx := context.Background()
-		count, err := collection.ChannelFnCount(ctx, func(ctx context.Context, ch chan<- User) error {
-			ch <- User{Firstname: "Alice", Age: 25}
-			ch <- User{Firstname: "Bob", Age: 30}
-			ch <- User{Firstname: "Charlie", Age: 35}
-			return nil
-		})
+		count, err := collection.ChannelFnCount(
+			ctx,
+			func(ctx context.Context, ch chan<- User) error {
+				ch <- User{Firstname: "Alice", Age: 25}
+				ch <- User{Firstname: "Bob", Age: 30}
+				ch <- User{Firstname: "Charlie", Age: 35}
+				return nil
+			},
+		)
 
 		Expect(err).To(BeNil())
 		Expect(count).To(Equal(3))
