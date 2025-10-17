@@ -5,6 +5,8 @@
 package collection_test
 
 import (
+	"strings"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -175,6 +177,41 @@ var _ = Describe("SetEqual", func() {
 			user2 := User{Firstname: "Bob", Age: 30}
 			set.Add(user1)
 			Expect(set.Contains(user2)).To(BeFalse())
+		})
+	})
+	Context("String", func() {
+		It("returns empty set string", func() {
+			Expect(set.String()).To(Equal("SetEqual[]"))
+		})
+
+		It("returns string with single element", func() {
+			user := User{Firstname: "Alice", Age: 25}
+			set.Add(user)
+			result := set.String()
+			Expect(result).To(HavePrefix("SetEqual["))
+			Expect(result).To(HaveSuffix("]"))
+			Expect(result).To(ContainSubstring("Alice"))
+			Expect(result).To(ContainSubstring("25"))
+		})
+
+		It("returns string with multiple elements in insertion order", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1)
+			set.Add(user2)
+			set.Add(user3)
+			result := set.String()
+			Expect(result).To(HavePrefix("SetEqual["))
+			Expect(result).To(HaveSuffix("]"))
+			Expect(result).To(ContainSubstring("Alice"))
+			Expect(result).To(ContainSubstring("Bob"))
+			Expect(result).To(ContainSubstring("Charlie"))
+			Expect(result).To(ContainSubstring(", "))
+			// Verify order is preserved (Alice should appear before Bob)
+			aliceIdx := strings.Index(result, "Alice")
+			bobIdx := strings.Index(result, "Bob")
+			Expect(aliceIdx).To(BeNumerically("<", bobIdx))
 		})
 	})
 })

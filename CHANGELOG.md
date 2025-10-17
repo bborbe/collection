@@ -8,6 +8,14 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.12.0
+
+- add String() method to Set, SetEqual, and SetHashCode interfaces for human-readable output
+- implement efficient string representation using strings.Builder
+- add comprehensive test coverage for String() methods with 100% code coverage
+- document non-deterministic ordering behavior for map-based sets
+- document insertion order preservation for SetEqual string representation
+
 ## v1.11.1
 
 - update dependencies to resolve compatibility issues

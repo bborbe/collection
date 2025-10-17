@@ -214,4 +214,39 @@ var _ = Describe("Set", func() {
 			Expect(set.Contains(user3)).To(BeTrue())
 		})
 	})
+	Context("String", func() {
+		It("returns empty set string", func() {
+			Expect(set.String()).To(Equal("Set[]"))
+		})
+
+		It("returns string with single element", func() {
+			set.Add(User{Firstname: "Alice", Age: 25})
+			result := set.String()
+			Expect(result).To(HavePrefix("Set["))
+			Expect(result).To(HaveSuffix("]"))
+			Expect(result).To(ContainSubstring("Alice"))
+			Expect(result).To(ContainSubstring("25"))
+		})
+
+		It("returns string with multiple elements", func() {
+			set.Add(User{Firstname: "Alice", Age: 25})
+			set.Add(User{Firstname: "Bob", Age: 30})
+			result := set.String()
+			Expect(result).To(HavePrefix("Set["))
+			Expect(result).To(HaveSuffix("]"))
+			Expect(result).To(ContainSubstring("Alice"))
+			Expect(result).To(ContainSubstring("Bob"))
+			Expect(result).To(ContainSubstring(", "))
+		})
+
+		It("works with simple types", func() {
+			intSet := collection.NewSet(1, 2, 3)
+			result := intSet.String()
+			Expect(result).To(HavePrefix("Set["))
+			Expect(result).To(HaveSuffix("]"))
+			Expect(result).To(ContainSubstring("1"))
+			Expect(result).To(ContainSubstring("2"))
+			Expect(result).To(ContainSubstring("3"))
+		})
+	})
 })

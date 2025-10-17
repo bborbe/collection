@@ -5,6 +5,8 @@
 package collection
 
 import (
+	"fmt"
+	"strings"
 	"sync"
 )
 
@@ -32,6 +34,8 @@ type SetEqual[T HasEqual[T]] interface {
 	Slice() []T
 	// Length returns the number of elements in the set.
 	Length() int
+	// String returns a human-readable string representation of the set.
+	String() string
 }
 
 // NewSetEqual creates a new thread-safe set for types that implement HasEqual.
@@ -112,4 +116,27 @@ func (s *setEqual[T]) Length() int {
 	defer s.mux.Unlock()
 
 	return len(s.data)
+}
+
+// String returns a human-readable string representation of the set.
+// Format: "SetEqual[element1, element2, ...]" for non-empty sets, "SetEqual[]" for empty sets.
+// Elements appear in the order they were added to the set.
+func (s *setEqual[T]) String() string {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	if len(s.data) == 0 {
+		return "SetEqual[]"
+	}
+
+	var b strings.Builder
+	b.WriteString("SetEqual[")
+	for i, e := range s.data {
+		if i > 0 {
+			b.WriteString(", ")
+		}
+		fmt.Fprintf(&b, "%v", e)
+	}
+	b.WriteString("]")
+	return b.String()
 }

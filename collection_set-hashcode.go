@@ -5,6 +5,8 @@
 package collection
 
 import (
+	"fmt"
+	"strings"
 	"sync"
 )
 
@@ -32,6 +34,8 @@ type SetHashCode[T HasHashCode] interface {
 	Slice() []T
 	// Length returns the number of elements in the set.
 	Length() int
+	// String returns a human-readable string representation of the set.
+	String() string
 }
 
 // NewSetHashCode creates a new thread-safe set for types that implement HasHashCode.
@@ -99,4 +103,29 @@ func (s *setHashCode[T]) Length() int {
 	defer s.mux.Unlock()
 
 	return len(s.data)
+}
+
+// String returns a human-readable string representation of the set.
+// Format: "SetHashCode[element1, element2, ...]" for non-empty sets, "SetHashCode[]" for empty sets.
+// Note: Element order is non-deterministic due to map iteration and may vary between calls.
+func (s *setHashCode[T]) String() string {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	if len(s.data) == 0 {
+		return "SetHashCode[]"
+	}
+
+	var b strings.Builder
+	b.WriteString("SetHashCode[")
+	first := true
+	for _, v := range s.data {
+		if !first {
+			b.WriteString(", ")
+		}
+		fmt.Fprintf(&b, "%v", v)
+		first = false
+	}
+	b.WriteString("]")
+	return b.String()
 }

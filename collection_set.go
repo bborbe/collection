@@ -5,6 +5,8 @@
 package collection
 
 import (
+	"fmt"
+	"strings"
 	"sync"
 )
 
@@ -22,6 +24,8 @@ type Set[T comparable] interface {
 	Slice() []T
 	// Length returns the number of elements in the set.
 	Length() int
+	// String returns a human-readable string representation of the set.
+	String() string
 }
 
 // NewSet creates a new thread-safe set for comparable types.
@@ -87,4 +91,29 @@ func (s *set[T]) Length() int {
 	defer s.mux.Unlock()
 
 	return len(s.data)
+}
+
+// String returns a human-readable string representation of the set.
+// Format: "Set[element1, element2, ...]" for non-empty sets, "Set[]" for empty sets.
+// Note: Element order is non-deterministic due to map iteration and may vary between calls.
+func (s *set[T]) String() string {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	if len(s.data) == 0 {
+		return "Set[]"
+	}
+
+	var b strings.Builder
+	b.WriteString("Set[")
+	first := true
+	for k := range s.data {
+		if !first {
+			b.WriteString(", ")
+		}
+		fmt.Fprintf(&b, "%v", k)
+		first = false
+	}
+	b.WriteString("]")
+	return b.String()
 }
