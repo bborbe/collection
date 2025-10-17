@@ -8,6 +8,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.11.1
+
+- update dependencies to resolve compatibility issues
+- add exclude directives for cloud.google.com/go v0.26.0 and golang.org/x/tools v0.38.0
+
 ## v1.11.0
 
 - add variadic constructors to Set, SetEqual, and SetHashCode for initialization with elements
