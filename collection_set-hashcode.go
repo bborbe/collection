@@ -15,9 +15,15 @@ type HasHashCode interface {
 
 // SetHashCode represents a thread-safe set for types that implement HasHashCode.
 // Elements are uniquely identified by their hash code.
+//
+// Performance: This implementation uses a map-based approach with O(1) average-case
+// operations for Add, Remove, and Contains. This provides better performance than
+// SetEqual for large sets or performance-critical code.
 type SetHashCode[T HasHashCode] interface {
-	// Add inserts an element into the set, using its hash code for uniqueness.
-	Add(element T)
+	// Add inserts elements into the set, using their hash codes for uniqueness.
+	// Duplicate elements (same hash code) are automatically ignored.
+	// Multiple elements can be added in a single call with only one mutex lock.
+	Add(elements ...T)
 	// Remove deletes an element from the set by its hash code.
 	Remove(element T)
 	// Contains reports whether an element with the given hash code is present in the set.
@@ -29,10 +35,23 @@ type SetHashCode[T HasHashCode] interface {
 }
 
 // NewSetHashCode creates a new thread-safe set for types that implement HasHashCode.
-func NewSetHashCode[T HasHashCode]() SetHashCode[T] {
-	return &setHashCode[T]{
+// It accepts optional initial elements to populate the set.
+// Duplicate elements (same hash code) are automatically handled.
+//
+// Performance: This implementation uses a map-based approach with O(1) average-case
+// operations. Initialization is O(n) for n elements, making it suitable for large sets.
+//
+// Example:
+//
+//	type User struct { ID int; Name string }
+//	func (u User) HashCode() string { return fmt.Sprintf("user-%d", u.ID) }
+//	set := collection.NewSetHashCode(User{1, "Alice"}, User{2, "Bob"})
+func NewSetHashCode[T HasHashCode](elements ...T) SetHashCode[T] {
+	s := &setHashCode[T]{
 		data: make(map[string]T),
 	}
+	s.Add(elements...)
+	return s
 }
 
 type setHashCode[T HasHashCode] struct {
@@ -40,11 +59,13 @@ type setHashCode[T HasHashCode] struct {
 	data map[string]T
 }
 
-func (s *setHashCode[T]) Add(element T) {
+func (s *setHashCode[T]) Add(elements ...T) {
 	s.mux.Lock()
 	defer s.mux.Unlock()
 
-	s.data[element.HashCode()] = element
+	for _, element := range elements {
+		s.data[element.HashCode()] = element
+	}
 }
 
 func (s *setHashCode[T]) Remove(element T) {

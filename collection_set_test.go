@@ -16,6 +16,74 @@ var _ = Describe("Set", func() {
 	BeforeEach(func() {
 		set = collection.NewSet[User]()
 	})
+	Context("NewSet with variadic constructor", func() {
+		It("creates empty set with no arguments", func() {
+			emptySet := collection.NewSet[int]()
+			Expect(emptySet.Length()).To(Equal(0))
+		})
+
+		It("creates set with single element", func() {
+			singleSet := collection.NewSet(42)
+			Expect(singleSet.Length()).To(Equal(1))
+			Expect(singleSet.Contains(42)).To(BeTrue())
+		})
+
+		It("creates set with multiple elements", func() {
+			multiSet := collection.NewSet(1, 2, 3, 4, 5)
+			Expect(multiSet.Length()).To(Equal(5))
+			Expect(multiSet.Contains(1)).To(BeTrue())
+			Expect(multiSet.Contains(3)).To(BeTrue())
+			Expect(multiSet.Contains(5)).To(BeTrue())
+		})
+
+		It("handles duplicate elements correctly", func() {
+			dupSet := collection.NewSet(1, 2, 2, 3, 3, 3)
+			Expect(dupSet.Length()).To(Equal(3))
+			Expect(dupSet.Contains(1)).To(BeTrue())
+			Expect(dupSet.Contains(2)).To(BeTrue())
+			Expect(dupSet.Contains(3)).To(BeTrue())
+		})
+
+		It("works with string type", func() {
+			stringSet := collection.NewSet("apple", "banana", "cherry")
+			Expect(stringSet.Length()).To(Equal(3))
+			Expect(stringSet.Contains("apple")).To(BeTrue())
+			Expect(stringSet.Contains("banana")).To(BeTrue())
+			Expect(stringSet.Contains("cherry")).To(BeTrue())
+		})
+
+		It("works with struct type", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			userSet := collection.NewSet(user1, user2)
+			Expect(userSet.Length()).To(Equal(2))
+			Expect(userSet.Contains(user1)).To(BeTrue())
+			Expect(userSet.Contains(user2)).To(BeTrue())
+		})
+	})
+	Context("Add with variadic parameters", func() {
+		It("adds multiple elements in single call", func() {
+			set.Add(
+				User{Firstname: "Alice", Age: 25},
+				User{Firstname: "Bob", Age: 30},
+				User{Firstname: "Charlie", Age: 35},
+			)
+			Expect(set.Length()).To(Equal(3))
+		})
+
+		It("handles duplicates in variadic add", func() {
+			user := User{Firstname: "Alice", Age: 25}
+			set.Add(user, user, user)
+			Expect(set.Length()).To(Equal(1))
+		})
+
+		It("adds single element", func() {
+			user := User{Firstname: "Alice", Age: 25}
+			set.Add(user)
+			Expect(set.Length()).To(Equal(1))
+			Expect(set.Contains(user)).To(BeTrue())
+		})
+	})
 	Context("Splice", func() {
 		It("returns no error", func() {
 			ptr := collection.Ptr("admin")

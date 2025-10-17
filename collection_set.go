@@ -9,9 +9,11 @@ import (
 )
 
 // Set represents a thread-safe collection of unique elements.
+// This implementation uses a map for O(1) average-case lookups, additions, and deletions.
 type Set[T comparable] interface {
-	// Add inserts an element into the set.
-	Add(element T)
+	// Add inserts elements into the set. Duplicate elements are automatically ignored.
+	// Multiple elements can be added in a single call with only one mutex lock.
+	Add(elements ...T)
 	// Remove deletes an element from the set.
 	Remove(element T)
 	// Contains reports whether an element is present in the set.
@@ -23,10 +25,22 @@ type Set[T comparable] interface {
 }
 
 // NewSet creates a new thread-safe set for comparable types.
-func NewSet[T comparable]() Set[T] {
-	return &set[T]{
+// It accepts optional initial elements to populate the set.
+// Duplicate elements are automatically handled.
+//
+// Performance: This implementation uses a map-based approach with O(1) average-case
+// operations for Add, Remove, and Contains. Initialization is O(n) for n elements.
+//
+// Example:
+//
+//	set := collection.NewSet(1, 2, 3)
+//	empty := collection.NewSet[int]()
+func NewSet[T comparable](elements ...T) Set[T] {
+	s := &set[T]{
 		data: make(map[T]struct{}),
 	}
+	s.Add(elements...)
+	return s
 }
 
 type set[T comparable] struct {
@@ -34,11 +48,12 @@ type set[T comparable] struct {
 	data map[T]struct{}
 }
 
-func (s *set[T]) Add(element T) {
+func (s *set[T]) Add(elements ...T) {
 	s.mux.Lock()
 	defer s.mux.Unlock()
-
-	s.data[element] = struct{}{}
+	for _, element := range elements {
+		s.data[element] = struct{}{}
+	}
 }
 
 func (s *set[T]) Remove(element T) {

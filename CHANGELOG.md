@@ -8,6 +8,18 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.11.0
+
+- add variadic constructors to Set, SetEqual, and SetHashCode for initialization with elements
+- enhance Add methods to accept variadic parameters for batch operations with single mutex lock
+- add comprehensive test coverage with 25 new test cases for variadic functionality
+- improve GoDoc comments with performance characteristics and complexity analysis
+- add performance comparison documentation between Set implementations
+- add usage examples to all constructor documentation
+- add go-modtool to Makefile for go.mod formatting
+- update Go version to 1.25.2
+- update dependencies (bborbe/errors, bborbe/run, and security tools)
+
 ## v1.10.2
 
 - add GitHub Actions CI workflow for automated testing
