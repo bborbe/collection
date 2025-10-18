@@ -8,6 +8,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.14.1
+
+- Add MarshalText implementation for Set to enable automatic parsing with github.com/bborbe/argument
+
 ## v1.14.0
 
 - Add ParseSetFromStrings function for converting string slices to Set with ~string constraint

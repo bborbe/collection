@@ -175,6 +175,11 @@ func ParseSetFromString[T ~string](value string) Set[T] {
 	return ParseSetFromStrings[T](trimmed)
 }
 
+// MarshalText implements encoding.TextMarshaler for Set.
+func (s *set[S]) MarshalText() ([]byte, error) {
+	return []byte(strings.Join(s.Strings(), ",")), nil
+}
+
 // UnmarshalText implements encoding.TextUnmarshaler for set with string element type.
 // This allows Set[string] to be automatically parsed from comma-separated strings
 // when used with github.com/bborbe/argument.
