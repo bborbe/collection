@@ -6,6 +6,7 @@ package collection
 
 import (
 	"sort"
+	"strings"
 	"sync"
 )
 
@@ -146,4 +147,57 @@ func (s *set[T]) Strings() []string {
 // Elements are sorted by their string representation for deterministic output.
 func (s *set[T]) String() string {
 	return formatSetString("Set[", s.Strings())
+}
+
+// ParseSetFromStrings converts a slice of strings into a Set with string-based type.
+// T must be string or a type based on string (using ~string constraint).
+func ParseSetFromStrings[T ~string](values []string) Set[T] {
+	result := make([]T, len(values))
+	for i, v := range values {
+		result[i] = T(v)
+	}
+	return NewSet(result...)
+}
+
+// ParseSetFromString parses a comma-separated string into a Set with string-based type.
+// T must be string or a type based on string (using ~string constraint).
+func ParseSetFromString[T ~string](value string) Set[T] {
+	parts := strings.FieldsFunc(value, func(r rune) bool {
+		return r == ','
+	})
+	// Trim whitespace from each part
+	trimmed := make([]string, 0, len(parts))
+	for _, part := range parts {
+		if t := strings.TrimSpace(part); t != "" {
+			trimmed = append(trimmed, t)
+		}
+	}
+	return ParseSetFromStrings[T](trimmed)
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler for set with string element type.
+// This allows Set[string] to be automatically parsed from comma-separated strings
+// when used with github.com/bborbe/argument.
+func (s *set[S]) UnmarshalText(text []byte) error {
+	value := string(text)
+	parts := strings.FieldsFunc(value, func(r rune) bool {
+		return r == ','
+	})
+
+	// Clear existing data
+	s.mux.Lock()
+	defer s.mux.Unlock()
+	s.data = make(map[S]struct{})
+
+	// Add trimmed parts
+	for _, part := range parts {
+		if trimmed := strings.TrimSpace(part); trimmed != "" {
+			// Convert string to S type - this only works when S is string or a string alias
+			// Using any() to allow conversion from string to ~string types
+			element := any(trimmed).(S)
+			s.data[element] = struct{}{}
+		}
+	}
+
+	return nil
 }

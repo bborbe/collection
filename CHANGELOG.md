@@ -8,6 +8,13 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.14.0
+
+- Add ParseSetFromStrings function for converting string slices to Set with ~string constraint
+- Add ParseSetFromString function for parsing comma-separated strings to Set with ~string constraint
+- Add UnmarshalText implementation for Set to enable automatic parsing with github.com/bborbe/argument
+- Add comprehensive test coverage for UnmarshalText and parsing functions
+
 ## v1.13.1
 
 - refactor Strings() method to eliminate code duplication using elementToString helper

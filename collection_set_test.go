@@ -5,6 +5,8 @@
 package collection_test
 
 import (
+	"encoding"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -318,6 +320,132 @@ var _ = Describe("Set", func() {
 			Expect(result).To(ContainSubstring("1"))
 			Expect(result).To(ContainSubstring("2"))
 			Expect(result).To(ContainSubstring("3"))
+		})
+	})
+	Context("UnmarshalText", func() {
+		It("parses single value", func() {
+			set := collection.NewSet[string]()
+			unmarshaler := set.(encoding.TextUnmarshaler)
+			err := unmarshaler.UnmarshalText([]byte("value1"))
+			Expect(err).NotTo(HaveOccurred())
+			Expect(set.Length()).To(Equal(1))
+			Expect(set.Contains("value1")).To(BeTrue())
+		})
+
+		It("parses multiple comma-separated values", func() {
+			set := collection.NewSet[string]()
+			unmarshaler := set.(encoding.TextUnmarshaler)
+			err := unmarshaler.UnmarshalText([]byte("value1,value2,value3"))
+			Expect(err).NotTo(HaveOccurred())
+			Expect(set.Length()).To(Equal(3))
+			Expect(set.Contains("value1")).To(BeTrue())
+			Expect(set.Contains("value2")).To(BeTrue())
+			Expect(set.Contains("value3")).To(BeTrue())
+		})
+
+		It("handles values with whitespace", func() {
+			set := collection.NewSet[string]()
+			unmarshaler := set.(encoding.TextUnmarshaler)
+			err := unmarshaler.UnmarshalText([]byte("value1, value2 , value3"))
+			Expect(err).NotTo(HaveOccurred())
+			Expect(set.Length()).To(Equal(3))
+			Expect(set.Contains("value1")).To(BeTrue())
+			Expect(set.Contains("value2")).To(BeTrue())
+			Expect(set.Contains("value3")).To(BeTrue())
+		})
+
+		It("handles empty string", func() {
+			set := collection.NewSet[string]()
+			unmarshaler := set.(encoding.TextUnmarshaler)
+			err := unmarshaler.UnmarshalText([]byte(""))
+			Expect(err).NotTo(HaveOccurred())
+			Expect(set.Length()).To(Equal(0))
+		})
+
+		It("handles trailing comma", func() {
+			set := collection.NewSet[string]()
+			unmarshaler := set.(encoding.TextUnmarshaler)
+			err := unmarshaler.UnmarshalText([]byte("value1,value2,"))
+			Expect(err).NotTo(HaveOccurred())
+			Expect(set.Length()).To(Equal(2))
+			Expect(set.Contains("value1")).To(BeTrue())
+			Expect(set.Contains("value2")).To(BeTrue())
+		})
+
+		It("handles leading comma", func() {
+			set := collection.NewSet[string]()
+			unmarshaler := set.(encoding.TextUnmarshaler)
+			err := unmarshaler.UnmarshalText([]byte(",value1,value2"))
+			Expect(err).NotTo(HaveOccurred())
+			Expect(set.Length()).To(Equal(2))
+			Expect(set.Contains("value1")).To(BeTrue())
+			Expect(set.Contains("value2")).To(BeTrue())
+		})
+
+		It("handles duplicate values", func() {
+			set := collection.NewSet[string]()
+			unmarshaler := set.(encoding.TextUnmarshaler)
+			err := unmarshaler.UnmarshalText([]byte("value1,value2,value1"))
+			Expect(err).NotTo(HaveOccurred())
+			Expect(set.Length()).To(Equal(2))
+			Expect(set.Contains("value1")).To(BeTrue())
+			Expect(set.Contains("value2")).To(BeTrue())
+		})
+
+		It("replaces existing set contents", func() {
+			set := collection.NewSet("old1", "old2")
+			unmarshaler := set.(encoding.TextUnmarshaler)
+			err := unmarshaler.UnmarshalText([]byte("new1,new2"))
+			Expect(err).NotTo(HaveOccurred())
+			Expect(set.Length()).To(Equal(2))
+			Expect(set.Contains("new1")).To(BeTrue())
+			Expect(set.Contains("new2")).To(BeTrue())
+			Expect(set.Contains("old1")).To(BeFalse())
+			Expect(set.Contains("old2")).To(BeFalse())
+		})
+	})
+	Context("ParseSetFromStrings", func() {
+		It("creates set from string slice", func() {
+			set := collection.ParseSetFromStrings[string]([]string{"a", "b", "c"})
+			Expect(set.Length()).To(Equal(3))
+			Expect(set.Contains("a")).To(BeTrue())
+			Expect(set.Contains("b")).To(BeTrue())
+			Expect(set.Contains("c")).To(BeTrue())
+		})
+
+		It("handles empty slice", func() {
+			set := collection.ParseSetFromStrings[string]([]string{})
+			Expect(set.Length()).To(Equal(0))
+		})
+
+		It("handles duplicates", func() {
+			set := collection.ParseSetFromStrings[string]([]string{"a", "b", "a", "c", "b"})
+			Expect(set.Length()).To(Equal(3))
+			Expect(set.Contains("a")).To(BeTrue())
+			Expect(set.Contains("b")).To(BeTrue())
+			Expect(set.Contains("c")).To(BeTrue())
+		})
+	})
+	Context("ParseSetFromString", func() {
+		It("parses comma-separated values", func() {
+			set := collection.ParseSetFromString[string]("a,b,c")
+			Expect(set.Length()).To(Equal(3))
+			Expect(set.Contains("a")).To(BeTrue())
+			Expect(set.Contains("b")).To(BeTrue())
+			Expect(set.Contains("c")).To(BeTrue())
+		})
+
+		It("trims whitespace", func() {
+			set := collection.ParseSetFromString[string](" a , b , c ")
+			Expect(set.Length()).To(Equal(3))
+			Expect(set.Contains("a")).To(BeTrue())
+			Expect(set.Contains("b")).To(BeTrue())
+			Expect(set.Contains("c")).To(BeTrue())
+		})
+
+		It("handles empty string", func() {
+			set := collection.ParseSetFromString[string]("")
+			Expect(set.Length()).To(Equal(0))
 		})
 	})
 })
