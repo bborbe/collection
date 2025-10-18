@@ -6,6 +6,7 @@ package collection
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 	"sync"
 )
@@ -26,14 +27,22 @@ type SetEqual[T HasEqual[T]] interface {
 	// Duplicate elements are automatically ignored.
 	// Multiple elements can be added in a single call with only one mutex lock.
 	Add(elements ...T)
-	// Remove deletes an element from the set using its Equal method for matching.
-	Remove(element T)
+	// Remove deletes elements from the set using its Equal method for matching.
+	// Multiple elements can be removed in a single call with only one mutex lock.
+	Remove(elements ...T)
 	// Contains reports whether an element matching the given value is present in the set.
 	Contains(element T) bool
+	// ContainsAll reports whether all given elements are present in the set using the Equal method.
+	ContainsAll(elements ...T) bool
+	// ContainsAny reports whether at least one of the given elements is present in the set using the Equal method.
+	ContainsAny(elements ...T) bool
 	// Slice returns all elements as a slice in arbitrary order.
 	Slice() []T
 	// Length returns the number of elements in the set.
 	Length() int
+	// Strings returns all elements as their string representations in sorted order.
+	// This provides deterministic output suitable for debugging and logging.
+	Strings() []string
 	// String returns a human-readable string representation of the set.
 	String() string
 }
@@ -76,13 +85,20 @@ func (s *setEqual[T]) Add(elements ...T) {
 	}
 }
 
-func (s *setEqual[T]) Remove(element T) {
+func (s *setEqual[T]) Remove(elements ...T) {
 	s.mux.Lock()
 	defer s.mux.Unlock()
 
 	result := make([]T, 0, len(s.data))
 	for _, e := range s.data {
-		if e.Equal(element) {
+		shouldRemove := false
+		for _, element := range elements {
+			if e.Equal(element) {
+				shouldRemove = true
+				break
+			}
+		}
+		if shouldRemove {
 			continue
 		}
 		result = append(result, e)
@@ -94,6 +110,30 @@ func (s *setEqual[T]) Contains(element T) bool {
 	s.mux.Lock()
 	defer s.mux.Unlock()
 	return s.contains(element)
+}
+
+func (s *setEqual[T]) ContainsAll(elements ...T) bool {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	for _, element := range elements {
+		if !s.contains(element) {
+			return false
+		}
+	}
+	return true
+}
+
+func (s *setEqual[T]) ContainsAny(elements ...T) bool {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	for _, element := range elements {
+		if s.contains(element) {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *setEqual[T]) contains(element T) bool {
@@ -118,24 +158,46 @@ func (s *setEqual[T]) Length() int {
 	return len(s.data)
 }
 
-// String returns a human-readable string representation of the set.
-// Format: "SetEqual[element1, element2, ...]" for non-empty sets, "SetEqual[]" for empty sets.
-// Elements appear in the order they were added to the set.
-func (s *setEqual[T]) String() string {
+// Strings returns all elements as their string representations in sorted order.
+// This provides deterministic output suitable for debugging and logging.
+func (s *setEqual[T]) Strings() []string {
 	s.mux.Lock()
 	defer s.mux.Unlock()
 
-	if len(s.data) == 0 {
+	result := make([]string, 0, len(s.data))
+	for _, e := range s.data {
+		var str string
+		switch v := any(e).(type) {
+		case fmt.Stringer:
+			str = v.String()
+		case string:
+			str = v
+		default:
+			str = fmt.Sprintf("%v", v)
+		}
+		result = append(result, str)
+	}
+
+	sort.Strings(result)
+	return result
+}
+
+// String returns a human-readable string representation of the set.
+// Format: "SetEqual[element1, element2, ...]" for non-empty sets, "SetEqual[]" for empty sets.
+// Elements are sorted by their string representation for deterministic output.
+func (s *setEqual[T]) String() string {
+	elements := s.Strings()
+	if len(elements) == 0 {
 		return "SetEqual[]"
 	}
 
 	var b strings.Builder
 	b.WriteString("SetEqual[")
-	for i, e := range s.data {
+	for i, str := range elements {
 		if i > 0 {
 			b.WriteString(", ")
 		}
-		fmt.Fprintf(&b, "%v", e)
+		b.WriteString(str)
 	}
 	b.WriteString("]")
 	return b.String()

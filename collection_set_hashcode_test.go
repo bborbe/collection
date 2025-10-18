@@ -175,6 +175,77 @@ var _ = Describe("SetHashCode", func() {
 			Expect(set.Contains(user2)).To(BeFalse())
 		})
 	})
+	Context("ContainsAll", func() {
+		It("returns true for empty list", func() {
+			user := User{Firstname: "Alice", Age: 25}
+			set.Add(user)
+			Expect(set.ContainsAll()).To(BeTrue())
+		})
+
+		It("returns true when all elements exist", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1, user2, user3)
+
+			Expect(set.ContainsAll(user1, user2)).To(BeTrue())
+			Expect(set.ContainsAll(user1, user2, user3)).To(BeTrue())
+		})
+
+		It("returns false when at least one element is missing", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1, user2)
+
+			Expect(set.ContainsAll(user1, user3)).To(BeFalse())
+			Expect(set.ContainsAll(user1, user2, user3)).To(BeFalse())
+		})
+
+		It("returns false when all elements are missing", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1)
+
+			Expect(set.ContainsAll(user2, user3)).To(BeFalse())
+		})
+	})
+	Context("ContainsAny", func() {
+		It("returns false for empty list", func() {
+			user := User{Firstname: "Alice", Age: 25}
+			set.Add(user)
+			Expect(set.ContainsAny()).To(BeFalse())
+		})
+
+		It("returns true when at least one element exists", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1, user2)
+
+			Expect(set.ContainsAny(user1)).To(BeTrue())
+			Expect(set.ContainsAny(user1, user3)).To(BeTrue())
+			Expect(set.ContainsAny(user3, user1)).To(BeTrue())
+		})
+
+		It("returns false when no elements exist", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1)
+
+			Expect(set.ContainsAny(user2, user3)).To(BeFalse())
+		})
+
+		It("returns true when all elements exist", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			set.Add(user1, user2)
+
+			Expect(set.ContainsAny(user1, user2)).To(BeTrue())
+		})
+	})
 	Context("String", func() {
 		It("returns empty set string", func() {
 			Expect(set.String()).To(Equal("SetHashCode[]"))

@@ -6,6 +6,7 @@ package collection
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 	"sync"
 )
@@ -16,14 +17,22 @@ type Set[T comparable] interface {
 	// Add inserts elements into the set. Duplicate elements are automatically ignored.
 	// Multiple elements can be added in a single call with only one mutex lock.
 	Add(elements ...T)
-	// Remove deletes an element from the set.
-	Remove(element T)
+	// Remove deletes elements from the set.
+	// Multiple elements can be removed in a single call with only one mutex lock.
+	Remove(elements ...T)
 	// Contains reports whether an element is present in the set.
 	Contains(element T) bool
+	// ContainsAll reports whether all given elements are present in the set.
+	ContainsAll(elements ...T) bool
+	// ContainsAny reports whether at least one of the given elements is present in the set.
+	ContainsAny(elements ...T) bool
 	// Slice returns all elements as a slice in arbitrary order.
 	Slice() []T
 	// Length returns the number of elements in the set.
 	Length() int
+	// Strings returns all elements as their string representations in sorted order.
+	// This provides deterministic output suitable for debugging and logging.
+	Strings() []string
 	// String returns a human-readable string representation of the set.
 	String() string
 }
@@ -60,11 +69,13 @@ func (s *set[T]) Add(elements ...T) {
 	}
 }
 
-func (s *set[T]) Remove(element T) {
+func (s *set[T]) Remove(elements ...T) {
 	s.mux.Lock()
 	defer s.mux.Unlock()
 
-	delete(s.data, element)
+	for _, element := range elements {
+		delete(s.data, element)
+	}
 }
 
 func (s *set[T]) Contains(element T) bool {
@@ -73,6 +84,30 @@ func (s *set[T]) Contains(element T) bool {
 
 	_, found := s.data[element]
 	return found
+}
+
+func (s *set[T]) ContainsAll(elements ...T) bool {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	for _, element := range elements {
+		if _, found := s.data[element]; !found {
+			return false
+		}
+	}
+	return true
+}
+
+func (s *set[T]) ContainsAny(elements ...T) bool {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	for _, element := range elements {
+		if _, found := s.data[element]; found {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *set[T]) Slice() []T {
@@ -93,26 +128,46 @@ func (s *set[T]) Length() int {
 	return len(s.data)
 }
 
-// String returns a human-readable string representation of the set.
-// Format: "Set[element1, element2, ...]" for non-empty sets, "Set[]" for empty sets.
-// Note: Element order is non-deterministic due to map iteration and may vary between calls.
-func (s *set[T]) String() string {
+// Strings returns all elements as their string representations in sorted order.
+// This provides deterministic output suitable for debugging and logging.
+func (s *set[T]) Strings() []string {
 	s.mux.Lock()
 	defer s.mux.Unlock()
 
-	if len(s.data) == 0 {
+	result := make([]string, 0, len(s.data))
+	for k := range s.data {
+		var str string
+		switch v := any(k).(type) {
+		case fmt.Stringer:
+			str = v.String()
+		case string:
+			str = v
+		default:
+			str = fmt.Sprintf("%v", v)
+		}
+		result = append(result, str)
+	}
+
+	sort.Strings(result)
+	return result
+}
+
+// String returns a human-readable string representation of the set.
+// Format: "Set[element1, element2, ...]" for non-empty sets, "Set[]" for empty sets.
+// Elements are sorted by their string representation for deterministic output.
+func (s *set[T]) String() string {
+	elements := s.Strings()
+	if len(elements) == 0 {
 		return "Set[]"
 	}
 
 	var b strings.Builder
 	b.WriteString("Set[")
-	first := true
-	for k := range s.data {
-		if !first {
+	for i, str := range elements {
+		if i > 0 {
 			b.WriteString(", ")
 		}
-		fmt.Fprintf(&b, "%v", k)
-		first = false
+		b.WriteString(str)
 	}
 	b.WriteString("]")
 	return b.String()

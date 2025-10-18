@@ -8,6 +8,16 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.13.0
+
+- add ContainsAny function for checking if any element from one slice exists in another
+- add ContainsAll and ContainsAny methods to Set, SetEqual, and SetHashCode interfaces
+- add Strings() method to all Set implementations for sorted string slice output
+- enhance Remove methods to accept variadic parameters for batch removal with single mutex lock
+- improve String() methods to use sorted output for deterministic debugging
+- optimize Strings() implementation with type switch for better performance (Stringer, string, default)
+- add comprehensive test coverage for new ContainsAll and ContainsAny methods
+
 ## v1.12.0
 
 - add String() method to Set, SetEqual, and SetHashCode interfaces for human-readable output
