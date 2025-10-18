@@ -8,6 +8,18 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.13.1
+
+- refactor Strings() method to eliminate code duplication using elementToString helper
+- refactor String() method to use formatSetString helper for consistent output
+- optimize memory usage: change map[T]bool to map[T]struct{} in ContainsAny and ContainsAll
+- standardize map lookup pattern to idiomatic two-value form
+- add package-level documentation (doc.go) describing library features and architecture
+- enhance HasHashCode documentation with security guidance for hash collision prevention
+- add performance notes to ContainsAny and ContainsAll functions
+- update copyright headers to 2025
+- improve test coverage to 99.3%
+
 ## v1.13.0
 
 - add ContainsAny function for checking if any element from one slice exists in another

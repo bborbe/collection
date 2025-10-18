@@ -1,17 +1,19 @@
-// Copyright (c) 2024 Benjamin Borbe All rights reserved.
+// Copyright (c) 2025 Benjamin Borbe All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
 package collection
 
 import (
-	"fmt"
 	"sort"
-	"strings"
 	"sync"
 )
 
 // HasHashCode represents types that can provide a string hash code for themselves.
+//
+// Security: HashCode() MUST return unique values for distinct elements.
+// Hash collisions will cause silent element overwrites in SetHashCode.
+// Recommended: Use fmt.Sprintf("%#v", obj) for comprehensive hashing.
 type HasHashCode interface {
 	HashCode() string
 }
@@ -148,16 +150,7 @@ func (s *setHashCode[T]) Strings() []string {
 
 	result := make([]string, 0, len(s.data))
 	for _, v := range s.data {
-		var str string
-		switch val := any(v).(type) {
-		case fmt.Stringer:
-			str = val.String()
-		case string:
-			str = val
-		default:
-			str = fmt.Sprintf("%v", val)
-		}
-		result = append(result, str)
+		result = append(result, elementToString(v))
 	}
 
 	sort.Strings(result)
@@ -168,19 +161,5 @@ func (s *setHashCode[T]) Strings() []string {
 // Format: "SetHashCode[element1, element2, ...]" for non-empty sets, "SetHashCode[]" for empty sets.
 // Elements are sorted by their string representation for deterministic output.
 func (s *setHashCode[T]) String() string {
-	elements := s.Strings()
-	if len(elements) == 0 {
-		return "SetHashCode[]"
-	}
-
-	var b strings.Builder
-	b.WriteString("SetHashCode[")
-	for i, str := range elements {
-		if i > 0 {
-			b.WriteString(", ")
-		}
-		b.WriteString(str)
-	}
-	b.WriteString("]")
-	return b.String()
+	return formatSetString("SetHashCode[", s.Strings())
 }

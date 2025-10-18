@@ -1,13 +1,11 @@
-// Copyright (c) 2024 Benjamin Borbe All rights reserved.
+// Copyright (c) 2025 Benjamin Borbe All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
 package collection
 
 import (
-	"fmt"
 	"sort"
-	"strings"
 	"sync"
 )
 
@@ -166,16 +164,7 @@ func (s *setEqual[T]) Strings() []string {
 
 	result := make([]string, 0, len(s.data))
 	for _, e := range s.data {
-		var str string
-		switch v := any(e).(type) {
-		case fmt.Stringer:
-			str = v.String()
-		case string:
-			str = v
-		default:
-			str = fmt.Sprintf("%v", v)
-		}
-		result = append(result, str)
+		result = append(result, elementToString(e))
 	}
 
 	sort.Strings(result)
@@ -186,19 +175,5 @@ func (s *setEqual[T]) Strings() []string {
 // Format: "SetEqual[element1, element2, ...]" for non-empty sets, "SetEqual[]" for empty sets.
 // Elements are sorted by their string representation for deterministic output.
 func (s *setEqual[T]) String() string {
-	elements := s.Strings()
-	if len(elements) == 0 {
-		return "SetEqual[]"
-	}
-
-	var b strings.Builder
-	b.WriteString("SetEqual[")
-	for i, str := range elements {
-		if i > 0 {
-			b.WriteString(", ")
-		}
-		b.WriteString(str)
-	}
-	b.WriteString("]")
-	return b.String()
+	return formatSetString("SetEqual[", s.Strings())
 }
