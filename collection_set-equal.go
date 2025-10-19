@@ -5,6 +5,7 @@
 package collection
 
 import (
+	"encoding/json"
 	"sort"
 	"sync"
 )
@@ -43,6 +44,13 @@ type SetEqual[T HasEqual[T]] interface {
 	Strings() []string
 	// String returns a human-readable string representation of the set.
 	String() string
+
+	// UnmarshalJSON deserializes a JSON array into set elements.
+	// It implements json.Unmarshaler for automatic JSON parsing.
+	UnmarshalJSON(data []byte) error
+	// MarshalJSON serializes set elements to a JSON array.
+	// It implements json.Marshaler for automatic JSON serialization.
+	MarshalJSON() ([]byte, error)
 }
 
 // NewSetEqual creates a new thread-safe set for types that implement HasEqual.
@@ -176,4 +184,34 @@ func (s *setEqual[T]) Strings() []string {
 // Elements are sorted by their string representation for deterministic output.
 func (s *setEqual[T]) String() string {
 	return formatSetString("SetEqual[", s.Strings())
+}
+
+// MarshalJSON implements json.Marshaler for SetEqual.
+// It serializes the set as a JSON array of elements, preserving insertion order.
+func (s *setEqual[T]) MarshalJSON() ([]byte, error) {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	return json.Marshal(s.data)
+}
+
+// UnmarshalJSON implements json.Unmarshaler for SetEqual.
+// It deserializes a JSON array into set elements using the Equal method for uniqueness.
+func (s *setEqual[T]) UnmarshalJSON(data []byte) error {
+	var elements []T
+	if err := json.Unmarshal(data, &elements); err != nil {
+		return err
+	}
+
+	s.mux.Lock()
+	defer s.mux.Unlock()
+	s.data = make([]T, 0, len(elements))
+
+	for _, element := range elements {
+		if !s.contains(element) {
+			s.data = append(s.data, element)
+		}
+	}
+
+	return nil
 }

@@ -8,6 +8,17 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.16.0
+
+- Add MarshalJSON and UnmarshalJSON methods to Set interface for JSON serialization
+- Add MarshalJSON and UnmarshalJSON methods to SetEqual interface for JSON serialization
+- Add MarshalJSON and UnmarshalJSON methods to SetHashCode interface for JSON serialization
+- Support JSON arrays for all Set types (primitives, structs, maps, nested objects)
+- Add comprehensive test coverage for JSON marshaling (39 new tests)
+- Add tests for Sets embedded in structs with single and multiple Set fields
+- Add tests for nested structs containing Set fields
+- Add tests for round-trip JSON marshal/unmarshal operations
+
 ## v1.15.0
 
 - Add UnmarshalText and MarshalText methods to Set interface for text encoding/decoding support

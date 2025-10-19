@@ -5,6 +5,7 @@
 package collection
 
 import (
+	"encoding/json"
 	"sort"
 	"strings"
 	"sync"
@@ -41,6 +42,13 @@ type Set[T comparable] interface {
 	// MarshalText converts set elements to comma-separated text.
 	// It implements encoding.TextMarshaler for automatic serialization.
 	MarshalText() ([]byte, error)
+
+	// UnmarshalJSON deserializes a JSON array into set elements.
+	// It implements json.Unmarshaler for automatic JSON parsing.
+	UnmarshalJSON(data []byte) error
+	// MarshalJSON serializes set elements to a JSON array.
+	// It implements json.Marshaler for automatic JSON serialization.
+	MarshalJSON() ([]byte, error)
 }
 
 // NewSet creates a new thread-safe set for comparable types.
@@ -210,6 +218,40 @@ func (s *set[S]) UnmarshalText(text []byte) error {
 			element := *(*S)(unsafe.Pointer(&trimmed)) //#nosec G103 -- Safe conversion between string-based types
 			s.data[element] = struct{}{}
 		}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements json.Marshaler for Set.
+// It serializes the set as a JSON array of elements, supporting primitives,
+// complex types, maps, and objects.
+func (s *set[T]) MarshalJSON() ([]byte, error) {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	elements := make([]T, 0, len(s.data))
+	for k := range s.data {
+		elements = append(elements, k)
+	}
+	return json.Marshal(elements)
+}
+
+// UnmarshalJSON implements json.Unmarshaler for Set.
+// It deserializes a JSON array into set elements, supporting primitives,
+// complex types, maps, and objects.
+func (s *set[T]) UnmarshalJSON(data []byte) error {
+	var elements []T
+	if err := json.Unmarshal(data, &elements); err != nil {
+		return err
+	}
+
+	s.mux.Lock()
+	defer s.mux.Unlock()
+	s.data = make(map[T]struct{})
+
+	for _, element := range elements {
+		s.data[element] = struct{}{}
 	}
 
 	return nil

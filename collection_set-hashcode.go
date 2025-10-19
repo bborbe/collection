@@ -5,6 +5,7 @@
 package collection
 
 import (
+	"encoding/json"
 	"sort"
 	"sync"
 )
@@ -47,6 +48,13 @@ type SetHashCode[T HasHashCode] interface {
 	Strings() []string
 	// String returns a human-readable string representation of the set.
 	String() string
+
+	// UnmarshalJSON deserializes a JSON array into set elements.
+	// It implements json.Unmarshaler for automatic JSON parsing.
+	UnmarshalJSON(data []byte) error
+	// MarshalJSON serializes set elements to a JSON array.
+	// It implements json.Marshaler for automatic JSON serialization.
+	MarshalJSON() ([]byte, error)
 }
 
 // NewSetHashCode creates a new thread-safe set for types that implement HasHashCode.
@@ -162,4 +170,36 @@ func (s *setHashCode[T]) Strings() []string {
 // Elements are sorted by their string representation for deterministic output.
 func (s *setHashCode[T]) String() string {
 	return formatSetString("SetHashCode[", s.Strings())
+}
+
+// MarshalJSON implements json.Marshaler for SetHashCode.
+// It serializes the set as a JSON array of elements in arbitrary order.
+func (s *setHashCode[T]) MarshalJSON() ([]byte, error) {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	elements := make([]T, 0, len(s.data))
+	for _, v := range s.data {
+		elements = append(elements, v)
+	}
+	return json.Marshal(elements)
+}
+
+// UnmarshalJSON implements json.Unmarshaler for SetHashCode.
+// It deserializes a JSON array into set elements using hash codes for uniqueness.
+func (s *setHashCode[T]) UnmarshalJSON(data []byte) error {
+	var elements []T
+	if err := json.Unmarshal(data, &elements); err != nil {
+		return err
+	}
+
+	s.mux.Lock()
+	defer s.mux.Unlock()
+	s.data = make(map[string]T)
+
+	for _, element := range elements {
+		s.data[element.HashCode()] = element
+	}
+
+	return nil
 }
