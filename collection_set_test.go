@@ -448,4 +448,109 @@ var _ = Describe("Set", func() {
 			Expect(set.Length()).To(Equal(0))
 		})
 	})
+	Context("UnmarshalText with custom string types", func() {
+		It("unmarshals into Set[CustomStringType]", func() {
+			set := collection.NewSet[CustomStringType]()
+			unmarshaler := set.(encoding.TextUnmarshaler)
+			err := unmarshaler.UnmarshalText([]byte("alpha,beta,gamma"))
+			Expect(err).NotTo(HaveOccurred())
+			Expect(set.Length()).To(Equal(3))
+			Expect(set.Contains(CustomStringType("alpha"))).To(BeTrue())
+			Expect(set.Contains(CustomStringType("beta"))).To(BeTrue())
+			Expect(set.Contains(CustomStringType("gamma"))).To(BeTrue())
+		})
+
+		It("marshals from Set[CustomStringType]", func() {
+			set := collection.NewSet[CustomStringType](
+				CustomStringType("alpha"),
+				CustomStringType("beta"),
+				CustomStringType("gamma"),
+			)
+			marshaler := set.(encoding.TextMarshaler)
+			data, err := marshaler.MarshalText()
+			Expect(err).NotTo(HaveOccurred())
+
+			// Parse the result back to verify it contains all elements
+			result := string(data)
+			Expect(result).To(ContainSubstring("alpha"))
+			Expect(result).To(ContainSubstring("beta"))
+			Expect(result).To(ContainSubstring("gamma"))
+		})
+
+		It("round-trips marshal/unmarshal with custom string type", func() {
+			original := collection.NewSet[CustomStringType](
+				CustomStringType("one"),
+				CustomStringType("two"),
+				CustomStringType("three"),
+			)
+
+			// Marshal
+			marshaler := original.(encoding.TextMarshaler)
+			data, err := marshaler.MarshalText()
+			Expect(err).NotTo(HaveOccurred())
+
+			// Unmarshal
+			reconstructed := collection.NewSet[CustomStringType]()
+			unmarshaler := reconstructed.(encoding.TextUnmarshaler)
+			err = unmarshaler.UnmarshalText(data)
+			Expect(err).NotTo(HaveOccurred())
+
+			// Verify
+			Expect(reconstructed.Length()).To(Equal(original.Length()))
+			Expect(reconstructed.Contains(CustomStringType("one"))).To(BeTrue())
+			Expect(reconstructed.Contains(CustomStringType("two"))).To(BeTrue())
+			Expect(reconstructed.Contains(CustomStringType("three"))).To(BeTrue())
+		})
+	})
+	Context("Type aliases for Set", func() {
+		It("unmarshals into type alias CustomStringTypeSet", func() {
+			var set CustomStringTypeSet = collection.NewSet[CustomStringType]()
+			unmarshaler := set.(encoding.TextUnmarshaler)
+			err := unmarshaler.UnmarshalText([]byte("foo,bar,baz"))
+			Expect(err).NotTo(HaveOccurred())
+			Expect(set.Length()).To(Equal(3))
+			Expect(set.Contains(CustomStringType("foo"))).To(BeTrue())
+			Expect(set.Contains(CustomStringType("bar"))).To(BeTrue())
+			Expect(set.Contains(CustomStringType("baz"))).To(BeTrue())
+		})
+
+		It("marshals from type alias CustomStringTypeSet", func() {
+			var set CustomStringTypeSet = collection.NewSet[CustomStringType](
+				CustomStringType("foo"),
+				CustomStringType("bar"),
+			)
+			marshaler := set.(encoding.TextMarshaler)
+			data, err := marshaler.MarshalText()
+			Expect(err).NotTo(HaveOccurred())
+
+			result := string(data)
+			Expect(result).To(ContainSubstring("foo"))
+			Expect(result).To(ContainSubstring("bar"))
+		})
+
+		It("round-trips marshal/unmarshal with type alias", func() {
+			var original CustomStringTypeSet = collection.NewSet[CustomStringType](
+				CustomStringType("apple"),
+				CustomStringType("banana"),
+				CustomStringType("cherry"),
+			)
+
+			// Marshal
+			marshaler := original.(encoding.TextMarshaler)
+			data, err := marshaler.MarshalText()
+			Expect(err).NotTo(HaveOccurred())
+
+			// Unmarshal
+			var reconstructed CustomStringTypeSet = collection.NewSet[CustomStringType]()
+			unmarshaler := reconstructed.(encoding.TextUnmarshaler)
+			err = unmarshaler.UnmarshalText(data)
+			Expect(err).NotTo(HaveOccurred())
+
+			// Verify
+			Expect(reconstructed.Length()).To(Equal(original.Length()))
+			Expect(reconstructed.Contains(CustomStringType("apple"))).To(BeTrue())
+			Expect(reconstructed.Contains(CustomStringType("banana"))).To(BeTrue())
+			Expect(reconstructed.Contains(CustomStringType("cherry"))).To(BeTrue())
+		})
+	})
 })

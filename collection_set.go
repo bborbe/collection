@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"unsafe"
 )
 
 // Set represents a thread-safe collection of unique elements.
@@ -197,9 +198,10 @@ func (s *set[S]) UnmarshalText(text []byte) error {
 	// Add trimmed parts
 	for _, part := range parts {
 		if trimmed := strings.TrimSpace(part); trimmed != "" {
-			// Convert string to S type - this only works when S is string or a string alias
-			// Using any() to allow conversion from string to ~string types
-			element := any(trimmed).(S)
+			// Convert string to S type using unsafe pointer conversion
+			// This works for any type S where the underlying type is string
+			// The conversion is safe because both string and ~string types have identical memory layout
+			element := *(*S)(unsafe.Pointer(&trimmed)) //#nosec G103 -- Safe conversion between string-based types
 			s.data[element] = struct{}{}
 		}
 	}

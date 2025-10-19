@@ -8,6 +8,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.14.2
+
+- Fix Set.UnmarshalText to properly support custom string-based types using unsafe.Pointer conversion
+- Add comprehensive tests for Set with custom string types and type aliases
+
 ## v1.14.1
 
 - Add MarshalText implementation for Set to enable automatic parsing with github.com/bborbe/argument
