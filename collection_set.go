@@ -35,6 +35,12 @@ type Set[T comparable] interface {
 	Strings() []string
 	// String returns a human-readable string representation of the set.
 	String() string
+	// UnmarshalText parses comma-separated text into set elements.
+	// It implements encoding.TextUnmarshaler for automatic parsing with argument packages.
+	UnmarshalText(text []byte) error
+	// MarshalText converts set elements to comma-separated text.
+	// It implements encoding.TextMarshaler for automatic serialization.
+	MarshalText() ([]byte, error)
 }
 
 // NewSet creates a new thread-safe set for comparable types.

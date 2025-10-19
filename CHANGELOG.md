@@ -8,6 +8,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.15.0
+
+- Add UnmarshalText and MarshalText methods to Set interface for text encoding/decoding support
+- Add comprehensive GoDoc comments for UnmarshalText and MarshalText methods
+
 ## v1.14.2
 
 - Fix Set.UnmarshalText to properly support custom string-based types using unsafe.Pointer conversion
