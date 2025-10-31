@@ -8,6 +8,13 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.17.0
+- Add Intersect function to find common elements between two slices
+- Intersect preserves order from first slice and handles duplicates automatically
+- Add comprehensive test suite with 21 tests covering strings, integers, and custom types
+- Update Go version from 1.25.2 to 1.25.3
+- Update dependencies (github.com/bborbe/run, github.com/onsi/ginkgo/v2, and others)
+
 ## v1.16.0
 
 - Add MarshalJSON and UnmarshalJSON methods to Set interface for JSON serialization
