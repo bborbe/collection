@@ -8,6 +8,19 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.19.0
+- **BREAKING**: Rename Map to Each for slice operations (side effects, no transformation)
+- **BREAKING**: Add new Map function with type transformation signature `Map[A, B any](ctx, []A, fn) ([]B, error)`
+- Add context.Context support to Each function for cancellation
+- Add context.Context support to Map function for cancellation
+- Add Each() method to Set interface with context support
+- Add Each() method to SetEqual interface with context support
+- Add Each() method to SetHashCode interface with context support
+- Add golangci-lint exclusion for interface duplication between SetEqual and SetHashCode
+- Update copyright year to 2025 for new and modified files
+- Add 14 new test cases for Set Each methods
+- Maintain 97.5% test coverage
+
 ## v1.18.0
 - Add Clone() method to Set, SetEqual, and SetHashCode for creating independent copies
 - Add Without() method to Set, SetEqual, and SetHashCode for immutable element removal

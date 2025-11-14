@@ -5,6 +5,7 @@
 package collection
 
 import (
+	"context"
 	"encoding/json"
 	"sort"
 	"sync"
@@ -44,7 +45,9 @@ type SetEqual[T HasEqual[T]] interface {
 	Strings() []string
 	// String returns a human-readable string representation of the set.
 	String() string
-
+	// Each calls fn for each element in the set. Iteration stops on first error.
+	// Elements are iterated in insertion order (FIFO).
+	Each(ctx context.Context, fn func(ctx context.Context, value T) error) error
 	// Clone returns a new SetEqual containing all elements from the current set.
 	// The returned set is a shallow copy - modifications to it won't affect the original.
 	Clone() SetEqual[T]
@@ -52,7 +55,6 @@ type SetEqual[T HasEqual[T]] interface {
 	// except those specified in the elements parameter.
 	// The original set is not modified.
 	Without(elements ...T) SetEqual[T]
-
 	// UnmarshalJSON deserializes a JSON array into set elements.
 	// It implements json.Unmarshaler for automatic JSON parsing.
 	UnmarshalJSON(data []byte) error
@@ -192,6 +194,25 @@ func (s *setEqual[T]) Strings() []string {
 // Elements are sorted by their string representation for deterministic output.
 func (s *setEqual[T]) String() string {
 	return formatSetString("SetEqual[", s.Strings())
+}
+
+// Each calls fn for each element in the set. Iteration stops on first error.
+// Elements are iterated in insertion order (FIFO).
+func (s *setEqual[T]) Each(ctx context.Context, fn func(ctx context.Context, value T) error) error {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	for _, element := range s.data {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			if err := fn(ctx, element); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 // Clone returns a new SetEqual containing all elements from the current set.

@@ -5,6 +5,9 @@
 package collection_test
 
 import (
+	"context"
+	"errors"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
@@ -13,8 +16,10 @@ import (
 
 var _ = Describe("SetHashCode", func() {
 	var set collection.SetHashCode[User]
+	var ctx context.Context
 	BeforeEach(func() {
 		set = collection.NewSetHashCode[User]()
+		ctx = context.Background()
 	})
 	Context("NewSetHashCode with variadic constructor", func() {
 		It("creates empty set with no arguments", func() {
@@ -275,6 +280,71 @@ var _ = Describe("SetHashCode", func() {
 			Expect(result).To(ContainSubstring("Bob"))
 			Expect(result).To(ContainSubstring("Charlie"))
 			Expect(result).To(ContainSubstring(", "))
+		})
+	})
+
+	Context("Each", func() {
+		It("returns nil for empty set", func() {
+			err := set.Each(ctx, func(ctx context.Context, u User) error {
+				return nil
+			})
+			Expect(err).NotTo(HaveOccurred())
+		})
+
+		It("calls fn for each element", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1, user2, user3)
+
+			visited := make(map[string]bool)
+			err := set.Each(ctx, func(ctx context.Context, u User) error {
+				visited[u.Firstname] = true
+				return nil
+			})
+
+			Expect(err).NotTo(HaveOccurred())
+			Expect(visited).To(HaveLen(3))
+			Expect(visited["Alice"]).To(BeTrue())
+			Expect(visited["Bob"]).To(BeTrue())
+			Expect(visited["Charlie"]).To(BeTrue())
+		})
+
+		It("stops on first error", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1, user2, user3)
+
+			count := 0
+			testErr := errors.New("test error")
+			err := set.Each(ctx, func(ctx context.Context, u User) error {
+				count++
+				if u.Firstname == "Bob" {
+					return testErr
+				}
+				return nil
+			})
+
+			Expect(err).To(Equal(testErr))
+			Expect(count).To(BeNumerically(">=", 1))
+			Expect(count).To(BeNumerically("<=", 3))
+		})
+
+		It("allows accumulation across iterations", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1, user2, user3)
+
+			totalAge := 0
+			err := set.Each(ctx, func(ctx context.Context, u User) error {
+				totalAge += u.Age
+				return nil
+			})
+
+			Expect(err).NotTo(HaveOccurred())
+			Expect(totalAge).To(Equal(90))
 		})
 	})
 

@@ -78,3 +78,7 @@ issues:
     - linters:
         - dupl
       path: "_test\\.go$"
+    - linters:
+        - dupl
+      path: "collection_set-(equal|hashcode)\\.go$"
+      text: "lines are duplicate"
