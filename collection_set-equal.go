@@ -45,6 +45,14 @@ type SetEqual[T HasEqual[T]] interface {
 	// String returns a human-readable string representation of the set.
 	String() string
 
+	// Clone returns a new SetEqual containing all elements from the current set.
+	// The returned set is a shallow copy - modifications to it won't affect the original.
+	Clone() SetEqual[T]
+	// Without returns a new SetEqual containing all elements from the current set
+	// except those specified in the elements parameter.
+	// The original set is not modified.
+	Without(elements ...T) SetEqual[T]
+
 	// UnmarshalJSON deserializes a JSON array into set elements.
 	// It implements json.Unmarshaler for automatic JSON parsing.
 	UnmarshalJSON(data []byte) error
@@ -184,6 +192,29 @@ func (s *setEqual[T]) Strings() []string {
 // Elements are sorted by their string representation for deterministic output.
 func (s *setEqual[T]) String() string {
 	return formatSetString("SetEqual[", s.Strings())
+}
+
+// Clone returns a new SetEqual containing all elements from the current set.
+// The returned set is a shallow copy - modifications to it won't affect the original.
+func (s *setEqual[T]) Clone() SetEqual[T] {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	result := &setEqual[T]{
+		data: make([]T, len(s.data)),
+	}
+	copy(result.data, s.data)
+
+	return result
+}
+
+// Without returns a new SetEqual containing all elements from the current set
+// except those specified in the elements parameter.
+// The original set is not modified.
+func (s *setEqual[T]) Without(elements ...T) SetEqual[T] {
+	result := s.Clone()
+	result.Remove(elements...)
+	return result
 }
 
 // MarshalJSON implements json.Marshaler for SetEqual.

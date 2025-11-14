@@ -114,7 +114,7 @@ var _ = Describe("SetEqual", func() {
 			length = set.Length()
 		})
 		Context("empty", func() {
-			It("has correct lenght", func() {
+			It("has correct length", func() {
 				Expect(length).To(Equal(0))
 			})
 		})
@@ -131,7 +131,7 @@ var _ = Describe("SetEqual", func() {
 					Age:       24,
 				})
 			})
-			It("has correct lenght", func() {
+			It("has correct length", func() {
 				Expect(length).To(Equal(2))
 			})
 		})
@@ -277,6 +277,108 @@ var _ = Describe("SetEqual", func() {
 			Expect(result).To(ContainSubstring("Bob"))
 			Expect(result).To(ContainSubstring("Charlie"))
 			Expect(result).To(ContainSubstring(", "))
+		})
+	})
+
+	Context("Clone", func() {
+		It("creates independent copy of empty set", func() {
+			clone := set.Clone()
+			Expect(clone.Length()).To(Equal(0))
+		})
+
+		It("creates independent copy with all elements", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			set.Add(user1, user2)
+
+			clone := set.Clone()
+			Expect(clone.Length()).To(Equal(2))
+			Expect(clone.Contains(user1)).To(BeTrue())
+			Expect(clone.Contains(user2)).To(BeTrue())
+		})
+
+		It("modifications to clone don't affect original", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1, user2)
+
+			clone := set.Clone()
+			clone.Add(user3)
+			clone.Remove(user1)
+
+			Expect(clone.Length()).To(Equal(2))
+			Expect(clone.Contains(user2)).To(BeTrue())
+			Expect(clone.Contains(user3)).To(BeTrue())
+
+			Expect(set.Length()).To(Equal(2))
+			Expect(set.Contains(user1)).To(BeTrue())
+			Expect(set.Contains(user2)).To(BeTrue())
+			Expect(set.Contains(user3)).To(BeFalse())
+		})
+	})
+
+	Context("Without", func() {
+		It("returns empty set when excluding all elements", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			set.Add(user1, user2)
+
+			result := set.Without(user1, user2)
+			Expect(result.Length()).To(Equal(0))
+		})
+
+		It("returns full set when excluding no elements", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			set.Add(user1, user2)
+
+			result := set.Without()
+			Expect(result.Length()).To(Equal(2))
+			Expect(result.Contains(user1)).To(BeTrue())
+			Expect(result.Contains(user2)).To(BeTrue())
+		})
+
+		It("returns set without specified elements", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1, user2, user3)
+
+			result := set.Without(user2)
+			Expect(result.Length()).To(Equal(2))
+			Expect(result.Contains(user1)).To(BeTrue())
+			Expect(result.Contains(user2)).To(BeFalse())
+			Expect(result.Contains(user3)).To(BeTrue())
+		})
+
+		It("doesn't modify original set", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1, user2, user3)
+
+			result := set.Without(user2, user3)
+
+			Expect(set.Length()).To(Equal(3))
+			Expect(set.Contains(user1)).To(BeTrue())
+			Expect(set.Contains(user2)).To(BeTrue())
+			Expect(set.Contains(user3)).To(BeTrue())
+
+			Expect(result.Length()).To(Equal(1))
+			Expect(result.Contains(user1)).To(BeTrue())
+		})
+
+		It("handles excluding non-existent elements", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1, user2)
+
+			result := set.Without(user3)
+			Expect(result.Length()).To(Equal(2))
+			Expect(result.Contains(user1)).To(BeTrue())
+			Expect(result.Contains(user2)).To(BeTrue())
 		})
 	})
 })

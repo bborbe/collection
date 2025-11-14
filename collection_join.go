@@ -7,11 +7,7 @@ package collection
 // Join allow to join two arrays into one new array
 func Join[T any](a []T, b []T) []T {
 	result := make([]T, 0, len(a)+len(b))
-	for _, aa := range a {
-		result = append(result, aa)
-	}
-	for _, bb := range b {
-		result = append(result, bb)
-	}
+	result = append(result, a...)
+	result = append(result, b...)
 	return result
 }

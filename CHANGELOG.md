@@ -8,6 +8,22 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.18.0
+- Add Clone() method to Set, SetEqual, and SetHashCode for creating independent copies
+- Add Without() method to Set, SetEqual, and SetHashCode for immutable element removal
+- Add ErrNotFound as standard error name (NotFoundError kept as deprecated alias)
+- Improve error wrapping consistency (use errors.Wrap instead of errors.Wrapf without format params)
+- Optimize Copy() and Join() functions using direct append operations
+- Fix unchecked type assertions in test files (13 occurrences)
+- Fix test description typos (lenght → length)
+- Enable lint target in Makefile check (was previously disabled)
+- Enhance golangci-lint configuration with additional linters (funlen, gocognit, nestif, maintidx, errname, forcetypeassert, bodyclose, asasalint, prealloc)
+- Update Go version from 1.25.3 to 1.25.4 in CI workflow
+- Update dependencies (github.com/bborbe/run 1.8.1 → 1.8.2, and others)
+- Remove deprecated golang.org/x/lint from tools.go
+- Add 102 new test cases for Clone() and Without() methods
+- Maintain 98.6% test coverage
+
 ## v1.17.0
 - Add Intersect function to find common elements between two slices
 - Intersect preserves order from first slice and handles duplicates automatically

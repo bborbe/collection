@@ -26,7 +26,7 @@ func ChannelFnList[T interface{}](
 		},
 	)
 	if err != nil {
-		return nil, errors.Wrapf(ctx, err, "convert channel to list failed")
+		return nil, errors.Wrap(ctx, err, "convert channel to list failed")
 	}
 	return result, nil
 }

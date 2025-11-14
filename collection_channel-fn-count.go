@@ -26,7 +26,7 @@ func ChannelFnCount[T interface{}](
 		},
 	)
 	if err != nil {
-		return -1, errors.Wrapf(ctx, err, "count channel failed")
+		return -1, errors.Wrap(ctx, err, "count channel failed")
 	}
 	return result, nil
 }

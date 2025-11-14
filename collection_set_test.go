@@ -123,7 +123,7 @@ var _ = Describe("Set", func() {
 			length = set.Length()
 		})
 		Context("empty", func() {
-			It("has correct lenght", func() {
+			It("has correct length", func() {
 				Expect(length).To(Equal(0))
 			})
 		})
@@ -140,7 +140,7 @@ var _ = Describe("Set", func() {
 					Age:       24,
 				})
 			})
-			It("has correct lenght", func() {
+			It("has correct length", func() {
 				Expect(length).To(Equal(2))
 			})
 		})
@@ -325,7 +325,8 @@ var _ = Describe("Set", func() {
 	Context("UnmarshalText", func() {
 		It("parses single value", func() {
 			set := collection.NewSet[string]()
-			unmarshaler := set.(encoding.TextUnmarshaler)
+			unmarshaler, ok := set.(encoding.TextUnmarshaler)
+			Expect(ok).To(BeTrue())
 			err := unmarshaler.UnmarshalText([]byte("value1"))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(set.Length()).To(Equal(1))
@@ -334,7 +335,8 @@ var _ = Describe("Set", func() {
 
 		It("parses multiple comma-separated values", func() {
 			set := collection.NewSet[string]()
-			unmarshaler := set.(encoding.TextUnmarshaler)
+			unmarshaler, ok := set.(encoding.TextUnmarshaler)
+			Expect(ok).To(BeTrue())
 			err := unmarshaler.UnmarshalText([]byte("value1,value2,value3"))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(set.Length()).To(Equal(3))
@@ -345,7 +347,8 @@ var _ = Describe("Set", func() {
 
 		It("handles values with whitespace", func() {
 			set := collection.NewSet[string]()
-			unmarshaler := set.(encoding.TextUnmarshaler)
+			unmarshaler, ok := set.(encoding.TextUnmarshaler)
+			Expect(ok).To(BeTrue())
 			err := unmarshaler.UnmarshalText([]byte("value1, value2 , value3"))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(set.Length()).To(Equal(3))
@@ -356,7 +359,8 @@ var _ = Describe("Set", func() {
 
 		It("handles empty string", func() {
 			set := collection.NewSet[string]()
-			unmarshaler := set.(encoding.TextUnmarshaler)
+			unmarshaler, ok := set.(encoding.TextUnmarshaler)
+			Expect(ok).To(BeTrue())
 			err := unmarshaler.UnmarshalText([]byte(""))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(set.Length()).To(Equal(0))
@@ -364,7 +368,8 @@ var _ = Describe("Set", func() {
 
 		It("handles trailing comma", func() {
 			set := collection.NewSet[string]()
-			unmarshaler := set.(encoding.TextUnmarshaler)
+			unmarshaler, ok := set.(encoding.TextUnmarshaler)
+			Expect(ok).To(BeTrue())
 			err := unmarshaler.UnmarshalText([]byte("value1,value2,"))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(set.Length()).To(Equal(2))
@@ -374,7 +379,8 @@ var _ = Describe("Set", func() {
 
 		It("handles leading comma", func() {
 			set := collection.NewSet[string]()
-			unmarshaler := set.(encoding.TextUnmarshaler)
+			unmarshaler, ok := set.(encoding.TextUnmarshaler)
+			Expect(ok).To(BeTrue())
 			err := unmarshaler.UnmarshalText([]byte(",value1,value2"))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(set.Length()).To(Equal(2))
@@ -384,7 +390,8 @@ var _ = Describe("Set", func() {
 
 		It("handles duplicate values", func() {
 			set := collection.NewSet[string]()
-			unmarshaler := set.(encoding.TextUnmarshaler)
+			unmarshaler, ok := set.(encoding.TextUnmarshaler)
+			Expect(ok).To(BeTrue())
 			err := unmarshaler.UnmarshalText([]byte("value1,value2,value1"))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(set.Length()).To(Equal(2))
@@ -394,7 +401,8 @@ var _ = Describe("Set", func() {
 
 		It("replaces existing set contents", func() {
 			set := collection.NewSet("old1", "old2")
-			unmarshaler := set.(encoding.TextUnmarshaler)
+			unmarshaler, ok := set.(encoding.TextUnmarshaler)
+			Expect(ok).To(BeTrue())
 			err := unmarshaler.UnmarshalText([]byte("new1,new2"))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(set.Length()).To(Equal(2))
@@ -451,7 +459,8 @@ var _ = Describe("Set", func() {
 	Context("UnmarshalText with custom string types", func() {
 		It("unmarshals into Set[CustomStringType]", func() {
 			set := collection.NewSet[CustomStringType]()
-			unmarshaler := set.(encoding.TextUnmarshaler)
+			unmarshaler, ok := set.(encoding.TextUnmarshaler)
+			Expect(ok).To(BeTrue())
 			err := unmarshaler.UnmarshalText([]byte("alpha,beta,gamma"))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(set.Length()).To(Equal(3))
@@ -466,7 +475,8 @@ var _ = Describe("Set", func() {
 				CustomStringType("beta"),
 				CustomStringType("gamma"),
 			)
-			marshaler := set.(encoding.TextMarshaler)
+			marshaler, ok := set.(encoding.TextMarshaler)
+			Expect(ok).To(BeTrue())
 			data, err := marshaler.MarshalText()
 			Expect(err).NotTo(HaveOccurred())
 
@@ -485,13 +495,15 @@ var _ = Describe("Set", func() {
 			)
 
 			// Marshal
-			marshaler := original.(encoding.TextMarshaler)
+			marshaler, ok := original.(encoding.TextMarshaler)
+			Expect(ok).To(BeTrue())
 			data, err := marshaler.MarshalText()
 			Expect(err).NotTo(HaveOccurred())
 
 			// Unmarshal
 			reconstructed := collection.NewSet[CustomStringType]()
-			unmarshaler := reconstructed.(encoding.TextUnmarshaler)
+			unmarshaler, ok := reconstructed.(encoding.TextUnmarshaler)
+			Expect(ok).To(BeTrue())
 			err = unmarshaler.UnmarshalText(data)
 			Expect(err).NotTo(HaveOccurred())
 
@@ -502,10 +514,122 @@ var _ = Describe("Set", func() {
 			Expect(reconstructed.Contains(CustomStringType("three"))).To(BeTrue())
 		})
 	})
+	Context("Clone", func() {
+		It("creates independent copy of empty set", func() {
+			clone := set.Clone()
+			Expect(clone.Length()).To(Equal(0))
+		})
+
+		It("creates independent copy with all elements", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			set.Add(user1, user2)
+
+			clone := set.Clone()
+			Expect(clone.Length()).To(Equal(2))
+			Expect(clone.Contains(user1)).To(BeTrue())
+			Expect(clone.Contains(user2)).To(BeTrue())
+		})
+
+		It("modifications to clone don't affect original", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1, user2)
+
+			clone := set.Clone()
+			clone.Add(user3)
+			clone.Remove(user1)
+
+			Expect(clone.Length()).To(Equal(2))
+			Expect(clone.Contains(user2)).To(BeTrue())
+			Expect(clone.Contains(user3)).To(BeTrue())
+
+			Expect(set.Length()).To(Equal(2))
+			Expect(set.Contains(user1)).To(BeTrue())
+			Expect(set.Contains(user2)).To(BeTrue())
+			Expect(set.Contains(user3)).To(BeFalse())
+		})
+	})
+
+	Context("Without", func() {
+		It("returns empty set when excluding all elements", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			set.Add(user1, user2)
+
+			result := set.Without(user1, user2)
+			Expect(result.Length()).To(Equal(0))
+		})
+
+		It("returns full set when excluding no elements", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			set.Add(user1, user2)
+
+			result := set.Without()
+			Expect(result.Length()).To(Equal(2))
+			Expect(result.Contains(user1)).To(BeTrue())
+			Expect(result.Contains(user2)).To(BeTrue())
+		})
+
+		It("returns set without specified elements", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1, user2, user3)
+
+			result := set.Without(user2)
+			Expect(result.Length()).To(Equal(2))
+			Expect(result.Contains(user1)).To(BeTrue())
+			Expect(result.Contains(user2)).To(BeFalse())
+			Expect(result.Contains(user3)).To(BeTrue())
+		})
+
+		It("doesn't modify original set", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1, user2, user3)
+
+			result := set.Without(user2, user3)
+
+			Expect(set.Length()).To(Equal(3))
+			Expect(set.Contains(user1)).To(BeTrue())
+			Expect(set.Contains(user2)).To(BeTrue())
+			Expect(set.Contains(user3)).To(BeTrue())
+
+			Expect(result.Length()).To(Equal(1))
+			Expect(result.Contains(user1)).To(BeTrue())
+		})
+
+		It("handles excluding non-existent elements", func() {
+			user1 := User{Firstname: "Alice", Age: 25}
+			user2 := User{Firstname: "Bob", Age: 30}
+			user3 := User{Firstname: "Charlie", Age: 35}
+			set.Add(user1, user2)
+
+			result := set.Without(user3)
+			Expect(result.Length()).To(Equal(2))
+			Expect(result.Contains(user1)).To(BeTrue())
+			Expect(result.Contains(user2)).To(BeTrue())
+		})
+
+		It("works with simple types", func() {
+			intSet := collection.NewSet(1, 2, 3, 4, 5)
+			result := intSet.Without(2, 4)
+			Expect(result.Length()).To(Equal(3))
+			Expect(result.Contains(1)).To(BeTrue())
+			Expect(result.Contains(3)).To(BeTrue())
+			Expect(result.Contains(5)).To(BeTrue())
+		})
+	})
+
 	Context("Type aliases for Set", func() {
 		It("unmarshals into type alias CustomStringTypeSet", func() {
 			var set CustomStringTypeSet = collection.NewSet[CustomStringType]()
-			unmarshaler := set.(encoding.TextUnmarshaler)
+			unmarshaler, ok := set.(encoding.TextUnmarshaler)
+			Expect(ok).To(BeTrue())
 			err := unmarshaler.UnmarshalText([]byte("foo,bar,baz"))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(set.Length()).To(Equal(3))
@@ -519,7 +643,8 @@ var _ = Describe("Set", func() {
 				CustomStringType("foo"),
 				CustomStringType("bar"),
 			)
-			marshaler := set.(encoding.TextMarshaler)
+			marshaler, ok := set.(encoding.TextMarshaler)
+			Expect(ok).To(BeTrue())
 			data, err := marshaler.MarshalText()
 			Expect(err).NotTo(HaveOccurred())
 
@@ -536,13 +661,15 @@ var _ = Describe("Set", func() {
 			)
 
 			// Marshal
-			marshaler := original.(encoding.TextMarshaler)
+			marshaler, ok := original.(encoding.TextMarshaler)
+			Expect(ok).To(BeTrue())
 			data, err := marshaler.MarshalText()
 			Expect(err).NotTo(HaveOccurred())
 
 			// Unmarshal
 			var reconstructed CustomStringTypeSet = collection.NewSet[CustomStringType]()
-			unmarshaler := reconstructed.(encoding.TextUnmarshaler)
+			unmarshaler, ok := reconstructed.(encoding.TextUnmarshaler)
+			Expect(ok).To(BeTrue())
 			err = unmarshaler.UnmarshalText(data)
 			Expect(err).NotTo(HaveOccurred())
 

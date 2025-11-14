@@ -39,14 +39,14 @@ func ChannelFnMap[T interface{}](
 						return nil
 					}
 					if err := mapFn(ctx, t); err != nil {
-						return errors.Wrapf(ctx, err, "map failed")
+						return errors.Wrap(ctx, err, "map failed")
 					}
 				}
 			}
 		},
 	)
 	if err != nil {
-		return errors.Wrapf(ctx, err, "map channel failed")
+		return errors.Wrap(ctx, err, "map channel failed")
 	}
 	return nil
 }

@@ -36,6 +36,15 @@ type Set[T comparable] interface {
 	Strings() []string
 	// String returns a human-readable string representation of the set.
 	String() string
+
+	// Clone returns a new Set containing all elements from the current set.
+	// The returned set is a shallow copy - modifications to it won't affect the original.
+	Clone() Set[T]
+	// Without returns a new Set containing all elements from the current set
+	// except those specified in the elements parameter.
+	// The original set is not modified.
+	Without(elements ...T) Set[T]
+
 	// UnmarshalText parses comma-separated text into set elements.
 	// It implements encoding.TextUnmarshaler for automatic parsing with argument packages.
 	UnmarshalText(text []byte) error
@@ -162,6 +171,32 @@ func (s *set[T]) Strings() []string {
 // Elements are sorted by their string representation for deterministic output.
 func (s *set[T]) String() string {
 	return formatSetString("Set[", s.Strings())
+}
+
+// Clone returns a new Set containing all elements from the current set.
+// The returned set is a shallow copy - modifications to it won't affect the original.
+func (s *set[T]) Clone() Set[T] {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	result := &set[T]{
+		data: make(map[T]struct{}, len(s.data)),
+	}
+
+	for element := range s.data {
+		result.data[element] = struct{}{}
+	}
+
+	return result
+}
+
+// Without returns a new Set containing all elements from the current set
+// except those specified in the elements parameter.
+// The original set is not modified.
+func (s *set[T]) Without(elements ...T) Set[T] {
+	result := s.Clone()
+	result.Remove(elements...)
+	return result
 }
 
 // ParseSetFromStrings converts a slice of strings into a Set with string-based type.

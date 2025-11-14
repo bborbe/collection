@@ -49,6 +49,14 @@ type SetHashCode[T HasHashCode] interface {
 	// String returns a human-readable string representation of the set.
 	String() string
 
+	// Clone returns a new SetHashCode containing all elements from the current set.
+	// The returned set is a shallow copy - modifications to it won't affect the original.
+	Clone() SetHashCode[T]
+	// Without returns a new SetHashCode containing all elements from the current set
+	// except those specified in the elements parameter.
+	// The original set is not modified.
+	Without(elements ...T) SetHashCode[T]
+
 	// UnmarshalJSON deserializes a JSON array into set elements.
 	// It implements json.Unmarshaler for automatic JSON parsing.
 	UnmarshalJSON(data []byte) error
@@ -170,6 +178,32 @@ func (s *setHashCode[T]) Strings() []string {
 // Elements are sorted by their string representation for deterministic output.
 func (s *setHashCode[T]) String() string {
 	return formatSetString("SetHashCode[", s.Strings())
+}
+
+// Clone returns a new SetHashCode containing all elements from the current set.
+// The returned set is a shallow copy - modifications to it won't affect the original.
+func (s *setHashCode[T]) Clone() SetHashCode[T] {
+	s.mux.Lock()
+	defer s.mux.Unlock()
+
+	result := &setHashCode[T]{
+		data: make(map[string]T, len(s.data)),
+	}
+
+	for k, v := range s.data {
+		result.data[k] = v
+	}
+
+	return result
+}
+
+// Without returns a new SetHashCode containing all elements from the current set
+// except those specified in the elements parameter.
+// The original set is not modified.
+func (s *setHashCode[T]) Without(elements ...T) SetHashCode[T] {
+	result := s.Clone()
+	result.Remove(elements...)
+	return result
 }
 
 // MarshalJSON implements json.Marshaler for SetHashCode.

@@ -19,7 +19,7 @@ var _ = Describe("Ptr", func() {
 		Expect(ptr).ToNot(BeNil())
 		Expect(*ptr).To(Equal("test"))
 		// Verify independent memory - modify original, ptr should be unchanged
-		value = "changed"
+		value = "changed" //nolint:ineffassign // intentional assignment to verify independence
 		Expect(*ptr).To(Equal("test"))
 	})
 
@@ -30,7 +30,7 @@ var _ = Describe("Ptr", func() {
 		Expect(ptr).ToNot(BeNil())
 		Expect(*ptr).To(Equal(42))
 		// Verify independent memory - modify original, ptr should be unchanged
-		value = 100
+		value = 100 //nolint:ineffassign // intentional assignment to verify independence
 		Expect(*ptr).To(Equal(42))
 	})
 
