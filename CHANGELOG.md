@@ -8,6 +8,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.20.0
+
+- update go and deps
+
 ## v1.19.0
 - **BREAKING**: Rename Map to Each for slice operations (side effects, no transformation)
 - **BREAKING**: Add new Map function with type transformation signature `Map[A, B any](ctx, []A, fn) ([]B, error)`
