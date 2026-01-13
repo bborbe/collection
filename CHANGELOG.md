@@ -8,6 +8,11 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.20.1
+
+- Update Go to 1.25.5
+- Update dependencies
+
 ## v1.20.0
 
 - update go and deps
