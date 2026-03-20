@@ -8,6 +8,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.20.7
+
+- standardize Makefile: add mocks mkdir, reorder lint target, multiline trivy format
+
 ## v1.20.6
 
 - chore: fix corrupted go module cache entries (osv-scalibr, containerd) to restore precommit health
