@@ -8,6 +8,13 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.20.8
+
+- Update multiple indirect dependencies (docker, containerd, opentelemetry, moby)
+- Replace k8s.io/kube-openapi replace directive with charmbracelet/x/cellbuf, denis-tingaikin/go-header, opencontainers/runtime-spec
+- Remove large exclude block for k8s and sigs.k8s.io versions
+- Add --allow-parallel-runners flag to golangci-lint invocation
+
 ## v1.20.7
 
 - standardize Makefile: add mocks mkdir, reorder lint target, multiline trivy format
