@@ -8,6 +8,14 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.20.9
+
+- update go to 1.26.2
+- update bborbe/errors to v1.5.9, bborbe/run to v1.9.17
+- update golangci-lint to v2.11.4, osv-scanner to v2.3.5
+- update shoenig/go-modtool to v0.7.1, counterfeiter to v6.12.2
+- update various indirect dependencies (golang.org/x/sys, fatih/color, sentry-go, etc.)
+
 ## v1.20.8
 
 - Update multiple indirect dependencies (docker, containerd, opentelemetry, moby)
