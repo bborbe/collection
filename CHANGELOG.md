@@ -8,6 +8,12 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## v1.20.10
+
+- Update bborbe/errors to v1.5.10 and bborbe/run to v1.9.21
+- Update golang.org/x dependencies (crypto, mod, net, text, tools, vuln)
+- Update indirect deps: getsentry, go-git, telemetry, term
+
 ## v1.20.9
 
 - update go to 1.26.2
