@@ -1,11 +1,12 @@
 ---
-status: committing
+status: completed
 summary: Migrated to tools.env + Makefile @version pattern; deleted tools.go and replace block; go.mod reduced from 445 to 38 lines; make precommit passes
 container: collection-002-migrate-tools-go
 dark-factory-version: v0.137.0-1-g310a15c6
 created: "2026-04-30T19:35:27Z"
 queued: "2026-04-30T19:35:27Z"
 started: "2026-04-30T19:36:54Z"
+completed: "2026-04-30T19:40:03Z"
 ---
 
 # Migrate from tools.go to tools.env + Makefile @version pattern
