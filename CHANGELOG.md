@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.20.13
+
+- bump go 1.26.3 → 1.26.4
+- bump bborbe/run v1.9.23 → v1.9.27
+- bump ginkgo/v2 v2.28.3 → v2.29.0, gomega v1.40.0 → v1.41.0
+- bump golang.org/x/net, x/sys, x/text, getsentry/sentry-go
+- add cloud.google.com/go v0.26.0 exclude
+
 ## v1.20.12
 
 - bump go 1.26.2 → 1.26.3
