@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.20.14
+
+- Update github.com/bborbe/run from v1.9.27 to v1.9.28
+- Update ginkgo from v2.29.0 to v2.32.0 and gomega from v1.41.0 to v1.42.1
+- Bump golang.org/x/* indirect dependencies
+
 ## v1.20.13
 
 - bump go 1.26.3 → 1.26.4
