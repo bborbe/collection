@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.20.15
+
+- Update bborbe/errors dependency to v1.5.15
+
 ## v1.20.14
 
 - Update github.com/bborbe/run from v1.9.27 to v1.9.28
