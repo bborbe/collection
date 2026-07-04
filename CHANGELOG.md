@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.20.17
+
+- Update github.com/bborbe/run to v1.9.30
+
 ## v1.20.16
 
 - Bump github.com/bborbe/run to v1.9.29
