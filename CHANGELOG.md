@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.20.18
+
+- Bump github.com/bborbe/errors to v1.5.16
+- Bump Go toolchain to 1.26.5
+
 ## v1.20.17
 
 - Update github.com/bborbe/run to v1.9.30

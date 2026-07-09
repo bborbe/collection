@@ -1,7 +1,7 @@
 github.com/Masterminds/semver/v3 v3.4.0 h1:Zog+i5UMtVoCU8oKka5P7i9q9HgrJeGzI9SA1Xbatp0=
 github.com/Masterminds/semver/v3 v3.4.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
-github.com/bborbe/errors v1.5.15 h1:GL/DpWlxkVcprneGM7xfTkhZNvzKXmdgNMtLDlAoK0Y=
-github.com/bborbe/errors v1.5.15/go.mod h1:bBTxWY1WGdpSN2MbB2uQQIoFCWjYz85UKVauzBadZRA=
+github.com/bborbe/errors v1.5.16 h1:e9AFAnKfO9VvAgL+IA8Wc6w+ABotT4npw9oj0uTJawY=
+github.com/bborbe/errors v1.5.16/go.mod h1:TqH+Gxnd0E6DCsjBtq6zAw59bEQ9f41rMspupcloRnI=
 github.com/bborbe/run v1.9.30 h1:LZrn9HBkEin2TEJQcLFOqEkkV8O3QpEv0sa+FViQszI=
 github.com/bborbe/run v1.9.30/go.mod h1:Ve7IMcUe5Iwc1s2d/mho92td0QAj7MUquATPujrK1BA=
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
