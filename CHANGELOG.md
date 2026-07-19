@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- Bump `golang.org/x/text` to v0.39.0 (CVE-2026-56852)
+
 ## v1.20.18
 
 - Bump github.com/bborbe/errors to v1.5.16
