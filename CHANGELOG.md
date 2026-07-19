@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-- Bump `golang.org/x/text` to v0.39.0 (CVE-2026-56852)
+- fix: Bump `golang.org/x/text` to v0.39.0 (CVE-2026-56852)
 
 ## v1.20.18
 
