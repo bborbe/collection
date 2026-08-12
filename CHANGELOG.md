@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v1.20.20
 
 - update Go to 1.26.5 and update dependencies
 
