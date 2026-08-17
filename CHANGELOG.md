@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v1.20.21
 
 - update Go to 1.26.6 and update dependencies (GO-2026-5972, GO-2026-6090)
 
