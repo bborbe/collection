@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-- update dependencies (bborbe/errors, bborbe/run)
+- chore: update dependencies (bborbe/errors v1.5.18, bborbe/run v1.9.35)
 
 ## v1.20.21
 
