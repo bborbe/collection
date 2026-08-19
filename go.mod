@@ -3,8 +3,8 @@ module github.com/bborbe/collection
 go 1.26.6
 
 require (
-	github.com/bborbe/errors v1.5.17
-	github.com/bborbe/run v1.9.34
+	github.com/bborbe/errors v1.5.18
+	github.com/bborbe/run v1.9.35
 	github.com/onsi/ginkgo/v2 v2.32.0
 	github.com/onsi/gomega v1.42.1
 )
