@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v1.20.22
 
 - chore: update dependencies (bborbe/errors v1.5.18, bborbe/run v1.9.35)
 
