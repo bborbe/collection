@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v1.20.23
 
 - chore: Bump golangci-lint to v2.13.1 and errcheck to v1.20.0 for Go 1.27 toolchain compatibility
 - chore: Run `gofmt -w` last in the `format` target so golines wrapping is normalized before the gofmt lint check
