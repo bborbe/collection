@@ -1,11 +1,11 @@
 module github.com/bborbe/collection
 
-go 1.26.6
+go 1.27.0
 
 require (
-	github.com/bborbe/errors v1.5.18
-	github.com/bborbe/run v1.9.35
-	github.com/onsi/ginkgo/v2 v2.32.0
+	github.com/bborbe/errors v1.5.20
+	github.com/bborbe/run v1.9.37
+	github.com/onsi/ginkgo/v2 v2.32.1
 	github.com/onsi/gomega v1.42.1
 )
 
