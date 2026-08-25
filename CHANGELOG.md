@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- chore: update github.com/bborbe/errors to v1.5.21
+
 ## v1.20.24
 
 - chore: update Go to 1.27.0 and github.com/bborbe/errors to v1.5.20, github.com/bborbe/run to v1.9.37, github.com/onsi/ginkgo/v2 to v2.32.1
