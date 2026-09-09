@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- feat: add .reviewignore for the PR size gate
+
 ## v1.20.27
 
 - chore: update Go to 1.27.1 and github.com/bborbe/errors to v1.6.1, github.com/bborbe/run to v1.10.3
