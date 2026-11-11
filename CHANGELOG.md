@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v1.21.7
 
 - chore: update Go to 1.27.4 and github.com/bborbe/run to v1.11.11
 
