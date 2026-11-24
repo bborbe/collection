@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- chore: remove 20 stale vulnerability ignores (withdrawn advisory, module absent from go.mod, or version outside the affected range)
+- chore: install Trivy from a pinned release tarball in CI so the job no longer depends on the retired apt-key helper
+
 ## v1.21.7
 
 - chore: update Go to 1.27.4 and github.com/bborbe/run to v1.11.11
